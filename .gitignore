@@ -1,3 +1,4 @@
+/.idea
 /homework1/CMakeLists.txt
 /homework1/cmake-build-debug
-/.idea
+/homework1/.idea
