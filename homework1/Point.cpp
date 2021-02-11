@@ -26,6 +26,7 @@ int Point::getY() const {
 }
 
 double Point::getDistance(const Point &p) const {
-  return sqrt(X * p.getX() + Y * p.getY());
+  return sqrt((X - p.getX()) * (X - p.getX()) +
+                  (Y - p.getY()) * (Y - p.getY()));
 }
 
