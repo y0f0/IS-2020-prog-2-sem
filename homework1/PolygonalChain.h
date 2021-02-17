@@ -4,18 +4,19 @@
 #include "Point.h"
 
 class PolygonalChain {
-private:
+protected:
   int countPoints;
   Point *points;
 public:
   PolygonalChain();
   PolygonalChain(int new_countsPoints, Point *new_points);
-  PolygonalChain(const PolygonalChain& pc);
-  PolygonalChain& operator=(const PolygonalChain& pc);
+  PolygonalChain(const PolygonalChain& pc) = default;
+  PolygonalChain& operator=(const PolygonalChain& pc) = default;
   ~PolygonalChain();
-  int getN() const;
-  Point getPoint(int index) const;
-  double  perimeter() const;
+
+  [[nodiscard]] int getN() const;
+  [[nodiscard]] Point getPoint(int index) const;
+  [[nodiscard]] virtual double perimeter() const;
 };
 
 #endif //HOMEWORK1_POLYGONALCHAIN_H

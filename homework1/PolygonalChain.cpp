@@ -4,20 +4,12 @@ PolygonalChain::PolygonalChain() :
   countPoints(0), points(nullptr){}
 
 PolygonalChain::PolygonalChain(int new_countsPoints, Point *new_points) :
-  countPoints(new_countsPoints), points(new_points) {}
-
-PolygonalChain::PolygonalChain(const PolygonalChain &pc) :
-  countPoints(pc.countPoints), points(pc.points) {}
-
-PolygonalChain &PolygonalChain::operator=(const PolygonalChain &pc) {
-  if (this == &pc) {
-    return *this;
+  countPoints(new_countsPoints) {
+  points = new Point[countPoints];
+  for (int i = 0; i < countPoints; i++) {
+    points[i] = Point(new_points[i].getX(), new_points[i].getY());
   }
-  countPoints = pc.countPoints;
-  points = pc.points;
-  return *this;
 }
-
 
 PolygonalChain::~PolygonalChain() {
   delete points;
