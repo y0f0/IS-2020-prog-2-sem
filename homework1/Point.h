@@ -8,13 +8,13 @@ private:
   int X;
   int Y;
 public:
-  Point();                            // конструктор по-умолчанию
-  Point(int x, int y);                // конструктор от координат
-  Point(const Point& p);              // конструктор копирования
-  Point& operator=(const Point& p);   // оператор присваивания
-  int getX() const;
-  int getY() const;
-  double getDistance(const Point& p) const;
+  Point();                                      // конструктор по-умолчанию
+  Point(int x, int y);                          // конструктор от координат
+  Point(const Point& p);                        // конструктор копирования
+  Point& operator=(const Point& p) = default;   // оператор присваивания
+  [[nodiscard]] int getX() const;
+  [[nodiscard]] int getY() const;
+  [[nodiscard]] double getDistance(const Point& p) const;
 };
 
 
