@@ -1,5 +1,5 @@
-#ifndef HOMEWORK1_POLYGONALCHAIN_H
-#define HOMEWORK1_POLYGONALCHAIN_H
+#ifndef HOMEWORK1_POLYGONAL_CHAIN_H
+#define HOMEWORK1_POLYGONAL_CHAIN_H
 
 #include "Point.h"
 
@@ -19,4 +19,4 @@ public:
   [[nodiscard]] virtual double perimeter() const;
 };
 
-#endif //HOMEWORK1_POLYGONALCHAIN_H
+#endif //HOMEWORK1_POLYGONAL_CHAIN_H
