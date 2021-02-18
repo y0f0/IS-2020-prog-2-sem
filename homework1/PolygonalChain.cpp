@@ -1,31 +1,30 @@
 #include "PolygonalChain.h"
 
 PolygonalChain::PolygonalChain() :
-  countPoints(0), points(nullptr){}
+  n(0), points(nullptr){}
 
 PolygonalChain::PolygonalChain(int new_countsPoints, Point *new_points) :
-  countPoints(new_countsPoints) {
-  points = new Point[countPoints];
-  for (int i = 0; i < countPoints; i++) {
+  n(new_countsPoints) {
+  points = new Point[n];
+  for (int i = 0; i < n; i++) {
     points[i] = Point(new_points[i].getX(), new_points[i].getY());
   }
 }
 
-PolygonalChain::~PolygonalChain() {
-  delete points;
-}
-
 int PolygonalChain::getN() const {
-  return countPoints;
+  return n;
 }
 
 Point PolygonalChain::getPoint(int index) const {
-  return points[index];
+  if (index >= 0 && index < n) {
+    return points[index];
+  }
+  throw std::invalid_argument("Wrong index!");
 }
 
 double PolygonalChain::perimeter() const {
   double res = 0;
-  for (int i = 0; i < countPoints - 1; i++) {
+  for (int i = 0; i < n - 1; i++) {
     res += points[i].getDistance(points[i + 1]);
   }
   return res;
