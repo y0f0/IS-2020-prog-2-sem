@@ -13,7 +13,7 @@ public:
   PolygonalChain(int new_countsPoints, Point *new_points);
   PolygonalChain(const PolygonalChain& pc) = default;
   PolygonalChain& operator=(const PolygonalChain& pc) = default;
-  ~PolygonalChain() = default;
+  virtual ~PolygonalChain() = default;
 
   int getN() const;
   Point getPoint(int index) const;
