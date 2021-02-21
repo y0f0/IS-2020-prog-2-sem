@@ -1,0 +1,10 @@
+#ifndef HOMEWORK2_POLYNOMIAL_H
+#define HOMEWORK2_POLYNOMIAL_H
+
+
+class Polynomial {
+
+};
+
+
+#endif //HOMEWORK2_POLYNOMIAL_H
