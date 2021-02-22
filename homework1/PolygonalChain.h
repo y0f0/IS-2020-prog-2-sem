@@ -6,14 +6,15 @@
 
 class PolygonalChain {
 protected:
-  int n;
-  Point *points;
+  int n_;
+  Point *points_;
 public:
   PolygonalChain();
-  PolygonalChain(int new_countsPoints, Point *new_points);
-  PolygonalChain(const PolygonalChain& pc) = default;
-  PolygonalChain& operator=(const PolygonalChain& pc) = default;
-  virtual ~PolygonalChain() = default;
+  PolygonalChain(int n, Point *points);
+
+  PolygonalChain(const PolygonalChain& other);
+  PolygonalChain& operator=(const PolygonalChain& other);
+  virtual ~PolygonalChain();
 
   int getN() const;
   Point getPoint(int index) const;

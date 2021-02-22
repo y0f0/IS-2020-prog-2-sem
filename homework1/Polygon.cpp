@@ -1,12 +1,10 @@
 #include "Polygon.h"
-#include <functional>
-#include <iostream>
 
 Polygon::Polygon()
   : ClosedPolygonalChain() {}
 
-Polygon::Polygon(int new_n, Point *new_points)
-  : ClosedPolygonalChain(new_n, new_points) { //Проверка на выпуклость
+Polygon::Polygon(int n, Point *points)
+  : ClosedPolygonalChain(n, points) { //Проверка на выпуклость
 
   enum sign{
     NEGATIVE,     // = 0
@@ -28,18 +26,18 @@ Polygon::Polygon(int new_n, Point *new_points)
 
   for (int i = 0; i < n; i++) {
     if (i == 0) {
-      auto v1 = Vector(points[n - 1], points[0]);
-      auto v2 = Vector(points[0], points[1]);
+      auto v1 = Vector(points_[n - 1], points_[0]);
+      auto v2 = Vector(points_[0], points_[1]);
       changeCount(v1.getCrossProduct(v2), count);
     }
     else if (i == n - 1) {
-      auto v1 = Vector(points[n - 2], points[n - 1]);
-      auto v2 = Vector(points[n - 1], points[0]);
+      auto v1 = Vector(points_[n - 2], points_[n - 1]);
+      auto v2 = Vector(points_[n - 1], points_[0]);
       changeCount(v1.getCrossProduct(v2), count);
     }
     else {
-      auto v1 = Vector(points[i - 1], points[i]);
-      auto v2 = Vector(points[i], points[i + 1]);
+      auto v1 = Vector(points_[i - 1], points_[i]);
+      auto v2 = Vector(points_[i], points_[i + 1]);
       changeCount(v1.getCrossProduct(v2), count);
     }
   }
@@ -48,18 +46,32 @@ Polygon::Polygon(int new_n, Point *new_points)
     throw std::invalid_argument("Error : Non-convex polygon.");
   }
 }
+Polygon::Polygon(const Polygon &other)
+  : ClosedPolygonalChain(other) {}
+
+Polygon &Polygon::operator=(const Polygon &other) {
+  if (&other == this) {
+    return *this;
+  }
+  delete[] points_;
+  points_ = new Point[n_];
+  for (int i = 0; i < n_; i++) {
+    points_[i] = Point(other.points_[i].getX(), other.points_[i].getY());
+  }
+  return *this;
+}
+
+Polygon::~Polygon() { }
 
 double Polygon::area() const {
   double res = 0;
-  for (int i = 0; i + 1 < n; i++) {
-    res += points[i].getX() * points[i + 1].getY();
+  for (int i = 0; i + 1 < n_; i++) {
+    res += points_[i].getX() * points_[i + 1].getY();
   }
-  for (int i = 0; i + 1 < n; i++) {
-    res -= points[i + 1].getX() * points[i].getY();
+  for (int i = 0; i + 1 < n_; i++) {
+    res -= points_[i + 1].getX() * points_[i].getY();
   }
-  res -= points[0].getX() * points[n - 1].getY();
+  res -= points_[0].getX() * points_[n_ - 1].getY();
   res = std::abs(res) * 0.5;
   return res;
 }
-
-

@@ -9,9 +9,12 @@ private:
   double basis2;
 public:
   Trapezoid();
-  Trapezoid(int new_n, Point *new_points);
-  Trapezoid(const Trapezoid &tr) = default;
-  Trapezoid& operator=(const Trapezoid& tr) = default;
+  Trapezoid(int n, Point *points);
+
+  Trapezoid(const Trapezoid& other);
+  Trapezoid& operator=(const Trapezoid& other);
+  ~Trapezoid();
+
   double height() const;
 };
 

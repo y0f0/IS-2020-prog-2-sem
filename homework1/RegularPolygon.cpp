@@ -3,33 +3,49 @@
 RegularPolygon::RegularPolygon()
   : Polygon() {}
 
-RegularPolygon::RegularPolygon(int new_n, Point *new_points)
-  : Polygon(new_n, new_points) {
-  if (n < 3) {
+RegularPolygon::RegularPolygon(int n, Point *points)
+  : Polygon(n, points) {
+  if (n_ < 3) {
     throw std::invalid_argument("Error : Invalid number of vertices for a regular polygon.");
   }
-  double dist = points[0].getDistance(points[1]);
-  for (int i = 1; i + 1 < n; i++) {
-    if (dist != points[i].getDistance(points[i + 1])) {
+  double dist = points_[0].getDistance(points_[1]);
+  for (int i = 1; i + 1 < n_; i++) {
+    if (dist != points_[i].getDistance(points_[i + 1])) {
       throw std::invalid_argument("Error : Invalid side length for regular polygon.");
     }
   }
-  if (dist != points[n - 1].getDistance(points[0])) {
+  if (dist != points_[n_ - 1].getDistance(points_[0])) {
     throw std::invalid_argument("Error : Invalid side length for regular polygon.");
   }
-  auto v1 = Vector(points[0], points[1]);
-  auto v2 = Vector(points[1], points[2]);
+  auto v1 = Vector(points_[0], points_[1]);
+  auto v2 = Vector(points_[1], points_[2]);
   auto angle = v1.getAngle(v2);
-  for (int i = 2; i + 1 < n; i++) {
+  for (int i = 2; i + 1 < n_; i++) {
     v1 = v2;
-    v2 = Vector(points[i], points[i + 1]);
+    v2 = Vector(points_[i], points_[i + 1]);
     if (angle != v1.getAngle(v2)) {
       throw std::invalid_argument("Error : Incorrect angle between two vertices of a regular polygon.");
     }
   }
   v1 = v2;
-  v2 = Vector(points[n - 1], points[0]);
+  v2 = Vector(points_[n_ - 1], points_[0]);
   if (angle != v1.getAngle(v2)) {
     throw std::invalid_argument("Error : Incorrect angle between two vertices of a regular polygon.");
   }
 }
+RegularPolygon::RegularPolygon(const RegularPolygon &other)
+  : Polygon(other) {}
+
+RegularPolygon &RegularPolygon::operator=(const RegularPolygon &other) {
+  if (&other == this) {
+    return *this;
+  }
+  delete[] points_;
+  points_ = new Point[n_];
+  for (int i = 0; i < n_; i++) {
+    points_[i] = Point(other.points_[i].getX(), other.points_[i].getY());
+  }
+  return *this;
+}
+
+RegularPolygon::~RegularPolygon() { }

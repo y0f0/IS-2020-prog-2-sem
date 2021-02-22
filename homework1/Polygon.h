@@ -6,14 +6,17 @@
 class Polygon : public ClosedPolygonalChain {
 public:
   Polygon();
-  Polygon(int new_n, Point *new_points);
-  Polygon(const Polygon& p) = default;
-  Polygon& operator=(const Polygon& p) = default;
+  Polygon(int n, Point *points);
+
+  Polygon(const Polygon& other);
+  Polygon& operator=(const Polygon& other);
+  ~Polygon();
+
   double area() const;
 
   struct Vector {
-    int x;
-    int y;
+    double x;
+    double y;
     Vector(const Point& a, const Point& b)
         : x(b.getX() - a.getX()),
           y(b.getY() - a.getY()) {}
@@ -31,7 +34,6 @@ public:
                       (this->getLength() * other.getLength()));
     }
   };
-
 };
 
 

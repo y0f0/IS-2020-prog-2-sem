@@ -5,16 +5,19 @@
 
 class Point {
 private:
-  int X;
-  int Y;
+  double x_;
+  double y_;
 public:
   Point();                                      // конструктор по-умолчанию
-  Point(int x, int y);                          // конструктор от координат
-  Point(const Point& p);                        // конструктор копирования
-  Point& operator=(const Point& p) = default;   // оператор присваивания
-  int getX() const;
-  int getY() const;
-  double getDistance(const Point& p) const;
+  Point(double x, double y);                    // конструктор от координат
+
+  Point(const Point& other);                    // конструктор копирования
+  Point& operator=(const Point& other);         // оператор присваивания
+  ~Point() { }                                   // деструктор
+
+  double getX() const;
+  double getY() const;
+  double getDistance(const Point& other) const;
 };
 
 
