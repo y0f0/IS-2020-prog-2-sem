@@ -9,6 +9,7 @@ ClosedPolygonalChain::ClosedPolygonalChain(int n, Point *points)
 ClosedPolygonalChain::ClosedPolygonalChain(const ClosedPolygonalChain &other)
   : PolygonalChain(other) {}
 
+//todo inherit =
 ClosedPolygonalChain& ClosedPolygonalChain::operator=(const ClosedPolygonalChain &other) {
   if (&other == this) {
     return *this;
@@ -23,6 +24,7 @@ ClosedPolygonalChain& ClosedPolygonalChain::operator=(const ClosedPolygonalChain
 
 ClosedPolygonalChain::~ClosedPolygonalChain() { }
 
+//todo perimeter from base
 double ClosedPolygonalChain::perimeter() const {
   double res = 0;
   for (int i = 0; i < n_ - 1; i++) {
