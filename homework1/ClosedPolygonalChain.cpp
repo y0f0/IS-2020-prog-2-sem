@@ -15,10 +15,7 @@ ClosedPolygonalChain::~ClosedPolygonalChain() { }
 
 //todo perimeter from base
 double ClosedPolygonalChain::perimeter() const {
-  double res = 0;
-  for (int i = 0; i < n_ - 1; i++) {
-    res += points_[i].getDistance(points_[i + 1]);
-  }
+  double res = PolygonalChain::perimeter();
   res += points_[0].getDistance(points_[n_ - 1]);
   return res;
 }
