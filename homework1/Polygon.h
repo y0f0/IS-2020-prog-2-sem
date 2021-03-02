@@ -9,7 +9,7 @@ public:
   Polygon(int n, Point *points);
 
   Polygon(const Polygon& other);
-  Polygon& operator=(const Polygon& other);
+  using PolygonalChain::operator=;
   ~Polygon();
 
   double area() const;

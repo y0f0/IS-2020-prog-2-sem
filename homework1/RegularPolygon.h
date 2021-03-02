@@ -9,7 +9,7 @@ public:
   RegularPolygon(int n, Point *points);
 
   RegularPolygon(const RegularPolygon& other);
-  RegularPolygon& operator=(const RegularPolygon& other);
+  using PolygonalChain::operator=;
   ~RegularPolygon();
 };
 

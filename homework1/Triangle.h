@@ -9,7 +9,7 @@ public:
   Triangle(int n, Point *points);
 
   Triangle(const Triangle& other);
-  Triangle& operator=(const Triangle& other);
+  using PolygonalChain::operator=;
   ~Triangle();
 
   bool hasRightAngle() const;

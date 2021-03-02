@@ -49,18 +49,6 @@ Polygon::Polygon(int n, Point *points)
 Polygon::Polygon(const Polygon &other)
   : ClosedPolygonalChain(other) {}
 
-Polygon &Polygon::operator=(const Polygon &other) {
-  if (&other == this) {
-    return *this;
-  }
-  delete[] points_;
-  points_ = new Point[n_];
-  for (int i = 0; i < n_; i++) {
-    points_[i] = Point(other.points_[i].getX(), other.points_[i].getY());
-  }
-  return *this;
-}
-
 Polygon::~Polygon() { }
 
 double Polygon::area() const {

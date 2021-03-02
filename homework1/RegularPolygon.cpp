@@ -36,16 +36,4 @@ RegularPolygon::RegularPolygon(int n, Point *points)
 RegularPolygon::RegularPolygon(const RegularPolygon &other)
   : Polygon(other) {}
 
-RegularPolygon &RegularPolygon::operator=(const RegularPolygon &other) {
-  if (&other == this) {
-    return *this;
-  }
-  delete[] points_;
-  points_ = new Point[n_];
-  for (int i = 0; i < n_; i++) {
-    points_[i] = Point(other.points_[i].getX(), other.points_[i].getY());
-  }
-  return *this;
-}
-
 RegularPolygon::~RegularPolygon() { }

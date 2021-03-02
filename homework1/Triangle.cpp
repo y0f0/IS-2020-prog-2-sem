@@ -13,18 +13,6 @@ Triangle::Triangle(int n, Point *points)
 Triangle::Triangle(const Triangle &other)
   : Polygon(other) {}
 
-Triangle &Triangle::operator=(const Triangle &other) {
-  if (&other == this) {
-    return *this;
-  }
-  delete[] points_;
-  points_ = new Point[n_];
-  for (int i = 0; i < n_; i++) {
-    points_[i] = Point(other.points_[i].getX(), other.points_[i].getY());
-  }
-  return *this;
-}
-
 Triangle::~Triangle() { }
 
 bool Triangle::hasRightAngle() const {
