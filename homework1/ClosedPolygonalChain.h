@@ -9,7 +9,7 @@ public:
   ClosedPolygonalChain(int n, Point *points);
 
   ClosedPolygonalChain(const ClosedPolygonalChain &other);
-  ClosedPolygonalChain &operator=(const ClosedPolygonalChain &other);
+  using PolygonalChain::operator=;
   ~ClosedPolygonalChain();
 
   double perimeter() const override;
