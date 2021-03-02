@@ -12,7 +12,7 @@ public:
   using PolygonalChain::operator=;
   ~Polygon();
 
-  double area() const;
+  virtual double area() const;
 
   struct Vector {
     double x;

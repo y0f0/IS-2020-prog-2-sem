@@ -11,6 +11,9 @@ public:
   RegularPolygon(const RegularPolygon& other);
   using PolygonalChain::operator=;
   ~RegularPolygon();
+
+  double area() const override;
+  double perimeter() const override;
 };
 
 

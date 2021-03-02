@@ -1,3 +1,4 @@
+#include <cmath>
 #include "RegularPolygon.h"
 
 RegularPolygon::RegularPolygon()
@@ -37,3 +38,13 @@ RegularPolygon::RegularPolygon(const RegularPolygon &other)
   : Polygon(other) {}
 
 RegularPolygon::~RegularPolygon() { }
+
+double RegularPolygon::area() const {
+  double a = points_[0].getDistance(points_[1]);
+  return (n_ * a * a) / (4 * tan(M_PI / n_));
+}
+
+double RegularPolygon::perimeter() const {
+  double a = points_[0].getDistance(points_[1]);
+  return a * n_;
+}
