@@ -2,18 +2,18 @@
 #define HOMEWORK1_POINT_H
 
 #include <cmath>
-//todo remove russian letters
+//fixed remove russian letters
 class Point {
 private:
   double x_;
   double y_;
 public:
-  Point();                                      // конструктор по-умолчанию
-  Point(double x, double y);                    // конструктор от координат
+  Point();                                      // default constructor
+  Point(double x, double y);                    // constructor from coordinates
 
-  Point(const Point& other);                    // конструктор копирования
-  Point& operator=(const Point& other);         // оператор присваивания
-  ~Point() { }                                   // деструктор
+  Point(const Point& other);                    // copy constructor
+  Point& operator=(const Point& other);         // assignment operator
+  ~Point() { }                                  // destructor
 
   double getX() const;
   double getY() const;
