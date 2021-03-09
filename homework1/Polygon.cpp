@@ -4,7 +4,7 @@ Polygon::Polygon()
   : ClosedPolygonalChain() {}
 
 Polygon::Polygon(int n, Point *points)
-  : ClosedPolygonalChain(n, points) { //Проверка на выпуклость
+  : ClosedPolygonalChain(n, points) {
 
   enum sign{
     NEGATIVE,     // = 0
