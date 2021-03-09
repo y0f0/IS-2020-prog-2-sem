@@ -2,7 +2,7 @@
 #define HOMEWORK1_POINT_H
 
 #include <cmath>
-
+//todo remove russian letters
 class Point {
 private:
   double x_;

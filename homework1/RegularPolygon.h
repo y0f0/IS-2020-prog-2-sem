@@ -2,7 +2,7 @@
 #define HOMEWORK1_REGULAR_POLYGON_H
 
 #include "Polygon.h"
-//fixed area and perimeter
+
 class RegularPolygon : public Polygon {
 public:
   RegularPolygon();
