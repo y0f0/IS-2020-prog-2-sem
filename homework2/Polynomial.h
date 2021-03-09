@@ -45,7 +45,7 @@ public:
   friend Polynomial operator*=(int value, const Polynomial& p);
   friend Polynomial operator/=(int value, const Polynomial& p);
 
-  int operator[](int i) const;
+  int& operator[](int i) const;
 
   friend std::ostream& operator<<(std::ostream& out, const Polynomial &polynomial);
   friend std::istream& operator>>(std::istream& in, Polynomial &polynomial);

@@ -67,6 +67,12 @@ bool operator!=(const Polynomial &lhs, const Polynomial &rhs) {
 #define MAX(a, b) ((a>b) ? (a) : (b))
 
 Polynomial operator+(const Polynomial &lhs, const Polynomial &rhs) {
+  if (lhs == Polynomial()) {
+    return rhs;
+  }
+  if (rhs == Polynomial()) {
+    return lhs;
+  }
   auto res = Polynomial();
   res.min_d_ = MIN(lhs.min_d_, rhs.min_d_);
   res.max_d_= MAX(lhs.max_d_, rhs.max_d_);
@@ -74,17 +80,23 @@ Polynomial operator+(const Polynomial &lhs, const Polynomial &rhs) {
   res.coefficients_ = new int[res.n_];
   for (int i = res.min_d_; i <= res.max_d_; i++) {
     if (i<=lhs.max_d_ && i<=rhs.max_d_ && i>=lhs.min_d_ && i>=rhs.min_d_) {
-      res.coefficients_[i] = lhs.coefficients_[i] + rhs.coefficients_[i];
+      res.coefficients_[i - res.min_d_] = lhs.coefficients_[i - lhs.min_d_] + rhs.coefficients_[i - rhs.min_d_];
     } else if (i <= lhs.max_d_ && i >= lhs.min_d_) {
-      res.coefficients_[i] = lhs.coefficients_[i];
+      res.coefficients_[i - res.min_d_] = lhs.coefficients_[i - lhs.min_d_];
     } else if (i <= rhs.max_d_ && i >= rhs.min_d_) {
-      res.coefficients_[i] = rhs.coefficients_[i];
+      res.coefficients_[i - res.min_d_] = rhs.coefficients_[i - rhs.min_d_];
     }
   }
   return res;
 }
 
 Polynomial operator-(const Polynomial &lhs, const Polynomial &rhs) {
+  if (lhs == Polynomial()) {
+    return rhs;
+  }
+  if (rhs == Polynomial()) {
+    return lhs;
+  }
   auto res = Polynomial();
   res.min_d_ = MIN(lhs.min_d_, rhs.min_d_);
   res.max_d_= MAX(lhs.max_d_, rhs.max_d_);
@@ -92,17 +104,21 @@ Polynomial operator-(const Polynomial &lhs, const Polynomial &rhs) {
   res.coefficients_ = new int[res.n_];
   for (int i = res.min_d_; i <= res.max_d_; i++) {
     if (i<=lhs.max_d_ && i<=rhs.max_d_ && i>=lhs.min_d_ && i>=rhs.min_d_) {
-      res.coefficients_[i] = lhs.coefficients_[i] - rhs.coefficients_[i];
+      res.coefficients_[i - res.min_d_] = lhs.coefficients_[i - lhs.min_d_] - rhs.coefficients_[i - rhs.min_d_];
     } else if (i <= lhs.max_d_ && i >= lhs.min_d_) {
-      res.coefficients_[i] = lhs.coefficients_[i];
+      res.coefficients_[i - res.min_d_] = lhs.coefficients_[i - lhs.min_d_];
     } else if (i <= rhs.max_d_ && i >= rhs.min_d_) {
-      res.coefficients_[i] = rhs.coefficients_[i];
+      res.coefficients_[i - res.min_d_] = -rhs.coefficients_[i - rhs.min_d_];
     }
   }
   return res;
 }
 
 Polynomial operator*(const Polynomial &lhs, const Polynomial &rhs) {
+  if (lhs == Polynomial() || rhs == Polynomial()) {
+    return Polynomial();
+  }
+
   auto res = Polynomial();
   res.min_d_ = lhs.min_d_ + rhs.min_d_;
   res.max_d_= lhs.max_d_ + rhs.max_d_;
@@ -180,9 +196,11 @@ Polynomial operator/(int value, const Polynomial & p) {
   return Polynomial(p.min_d_, p.max_d_, coefficients);
 }
 
-int Polynomial::operator[](int i) const {
+int& Polynomial::operator[](int i) const {
   if (i < 0 || i >= this->n_) {
-    throw std::invalid_argument("Error: Invalid index coefficient of polynomial.");
+    static int x = 0;
+    return x;
+//    throw std::invalid_argument("Error: Invalid index coefficient of polynomial.");
   }
   return this->coefficients_[i];
 }
