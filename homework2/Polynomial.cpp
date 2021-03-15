@@ -1,6 +1,8 @@
 #include "Polynomial.h"
-#include <iostream>
-#include <vector>
+#include <fstream>
+#include <math.h>
+
+using namespace std;
 
 Polynomial::Polynomial()
   : min_d_(0),
@@ -143,7 +145,30 @@ Polynomial operator*(const Polynomial &lhs, const Polynomial &rhs) {
   for (int i = 0; i < p.n_; i++) {                          \
     coefficients[i] = p.coefficients_[i] operation value;   \
   }                                                         \
-  return Polynomial(p.min_d_, p.max_d_, coefficients);      \
+  auto res = Polynomial();                                  \
+  res.min_d_ = p.min_d_;                                    \
+  res.max_d_ = p.max_d_;                                    \
+  for (int i = 0; i < p.n_; i++) {                          \
+    if (coefficients[i] == 0) {                             \
+      res.min_d_++;                                         \
+    } else {                                                \
+      break;                                                \
+    }                                                       \
+  }                                                         \
+  for (int i = p.n_ - 1; i >= 0; i--) {                     \
+    if (coefficients[i] == 0) {                             \
+      res.max_d_--;                                         \
+    } else {                                                \
+      break;                                                \
+    }                                                       \
+  }                                                         \
+  res.n_ = res.max_d_ - res.min_d_ + 1;                     \
+  int *coeff = new int[res.n_];                             \
+  for (int i = res.min_d_; i <= res.max_d_; i++)  {         \
+    coeff[i - res.min_d_] = coefficients[i - p.min_d_];     \
+  }                                                         \
+  res.coefficients_ = coeff;                                \
+  return res;                                               \
 }
 
 Polynomial operator+(const Polynomial &p, int value) {
@@ -165,13 +190,35 @@ Polynomial operator/(const Polynomial &p, int value) {
   GetLeftOperationResult(p, value, /);
 }
 
-
 #define GetRightOperationResult(p, value, operation) {      \
   int *coefficients = new int[p.n_];                        \
   for (int i = 0; i < p.n_; i++) {                          \
     coefficients[i] = value operation p.coefficients_[i];   \
   }                                                         \
-  return Polynomial(p.min_d_, p.max_d_, coefficients);      \
+  auto res = Polynomial();                                  \
+  res.min_d_ = p.min_d_;                                    \
+  res.max_d_ = p.max_d_;                                    \
+  for (int i = 0; i < p.n_; i++) {                          \
+    if (coefficients[i] == 0) {                             \
+      res.min_d_++;                                         \
+    } else {                                                \
+      break;                                                \
+    }                                                       \
+  }                                                         \
+  for (int i = p.n_ - 1; i >= 0; i--) {                     \
+    if (coefficients[i] == 0) {                             \
+      res.max_d_--;                                         \
+    } else {                                                \
+      break;                                                \
+    }                                                       \
+  }                                                         \
+  res.n_ = res.max_d_ - res.min_d_ + 1;                     \
+  int *coeff = new int[res.n_];                             \
+  for (int i = res.min_d_; i <= res.max_d_; i++)  {         \
+    coeff[i - res.min_d_] = coefficients[i - p.min_d_];     \
+  }                                                         \
+  res.coefficients_ = coeff;                                \
+  return res;                                               \
 }
 
 Polynomial operator+(int value, const Polynomial & p) {
@@ -196,13 +243,38 @@ Polynomial operator/(int value, const Polynomial & p) {
   return Polynomial(p.min_d_, p.max_d_, coefficients);
 }
 
-int& Polynomial::operator[](int i) const {
-  if (i < 0 || i >= this->n_) {
-    static int x = 0;
-    return x;
-//    throw std::invalid_argument("Error: Invalid index coefficient of polynomial.");
+int& Polynomial::operator[](int i) {
+  if (i < min_d_) {
+    int *new_coeff = new int [max_d_ - i + 1];
+    for (int j = 0; j < max_d_ - i + 1; j++) {
+      new_coeff[j] = 0;
+    }
+    for (int j = 0; j < n_; j++) {
+      new_coeff[max_d_ - i - n_] = coefficients_[j];
+    }
+    min_d_ = i;
+    n_ = max_d_ - min_d_ + 1;
+    coefficients_ = new_coeff;
+  } else if (i > max_d_) {
+    int *new_coeff = new int [i - min_d_ + 1];
+    for (int j = 0; j < i - min_d_ + 1; j++) {
+      new_coeff[j] = 0;
+    }
+    for (int j = 0; j < n_; j++) {
+      new_coeff[j] = coefficients_[j];
+    }
+    max_d_ = i;
+    n_ = max_d_ - min_d_ + 1;
+    coefficients_ = new_coeff;
   }
-  return this->coefficients_[i];
+  return this->coefficients_[i - min_d_];
+}
+
+int Polynomial::operator[](int i) const {
+  if (i > max_d_ || i < min_d_) {
+    return 0;
+  }
+  return this->coefficients_[i - min_d_];
 }
 
 std::ostream &operator<<(std::ostream &out, const Polynomial &polynomial) {
@@ -210,21 +282,31 @@ std::ostream &operator<<(std::ostream &out, const Polynomial &polynomial) {
     out << 0;
     return out;
   }
-  int startI = polynomial.n_ - 1;
-  int startJ = polynomial.max_d_;
-  while (polynomial.coefficients_[startI] == 0) {
-    startI--;
-    startJ--;
+  int i = polynomial.n_ - 1; // index of coefficients NB: polnomial.coefficiends_[i] != 0
+  int j = polynomial.max_d_; // current power
+
+  if (j != 0) {
+    if (polynomial.coefficients_[i] != 1 && polynomial.coefficients_[i] != -1) {
+      out << polynomial.coefficients_[i];
+    } else if (polynomial.coefficients_[i] == -1){
+      out << "-";
+    }
+
+    if (j == 1) {
+      out << "x";
+    } else {
+      out << "x^" << j;
+    }
+  } else {
+    if (polynomial.coefficients_[i] > 0)
+      out << "+" << polynomial.coefficients_[i];
+    else
+      out << polynomial.coefficients_[i];
   }
-  if (polynomial.coefficients_[startI] == -1) out << "-";
-  else if (polynomial.coefficients_[startI] != 1) out  << polynomial.coefficients_[startI];
 
-  if (startJ == 1) out << 'x';
-  else if (startJ != 0) out << "x^" << startJ;
-
-  for (int i = startI - 1, j = startJ - 1; i >= 0; i--, j--) {
+  for (i--, j--; i >= 0; i--, j--) {
     if (polynomial.coefficients_[i]) {
-      if (j == 1) {
+      if (j != 0) {
         if (polynomial.coefficients_[i] != 1 && polynomial.coefficients_[i] != -1) {
           if (polynomial.coefficients_[i] > 0)
             out << "+" << polynomial.coefficients_[i];
@@ -235,22 +317,16 @@ std::ostream &operator<<(std::ostream &out, const Polynomial &polynomial) {
         } else {
           out << "-";
         }
-        out << "x";
-      } else if (j == 0) {
-        if (polynomial.coefficients_[i] > 0) out << "+" << polynomial.coefficients_[i];
-        else out << polynomial.coefficients_[i];
+        if (j == 1) {
+          out << "x";
+        } else {
+          out << "x^" << j;
+        }
       } else {
-        if (polynomial.coefficients_[i] != 1 && polynomial.coefficients_[i] != -1) {
-          if (polynomial.coefficients_[i] > 0)
-            out << "+" << polynomial.coefficients_[i];
-          else
-            out << polynomial.coefficients_[i];
-        } else if (polynomial.coefficients_[i] == 1){
-          out << "+";
-        } else {
-          out << "-";
-        }
-        out << "x^" << j;
+        if (polynomial.coefficients_[i] > 0)
+          out << "+" << polynomial.coefficients_[i];
+        else
+          out << polynomial.coefficients_[i];
       }
     }
   }
@@ -258,63 +334,23 @@ std::ostream &operator<<(std::ostream &out, const Polynomial &polynomial) {
 }
 
 std::istream &operator>>(std::istream &in, Polynomial &polynomial) {
-  int max_d, min_d, n;
-  int *coefficient;
-  int cur;
-  std::vector<int> v;
-  if (in.peek() == 'x') {
-    v.push_back(1);
-  }
-  else if (in.peek() == '-') {
-    in.ignore();
-    if (in.peek() == 'x') {
-      v.push_back(-1);
-    }
-    else {
-      in >> cur;
-      v.push_back(cur);
-    }
-  }
-  else {
-    in >> cur;
-    v.push_back(cur);
-  }
-  in.ignore();  //x
-  in.ignore();  //^
-  in >> max_d; //power
-  char c;
-  while (in.get(c) && (c == '+' || c == '-')) {
-    if (in.peek() == 'x') { //ones
-      if (c == '-') {
-        v.push_back(-1);
-      }
-      else {
-        v.push_back(1);
-      }
-    }
-    else {
-      in >> cur;
-      v.push_back(cur);
-    }
-    if (in.peek() == 'x') {
-      in.ignore();  //x
-      if (in.peek() == '^') {
-        in.ignore(); //^
-        in >> min_d;
-      } else {
-        min_d = 1;
-      }
-    } else {
-      min_d = 0;
-    }
-  }
-  n = max_d - min_d + 1;
-  coefficient = new int[n];
+  int min_d, max_d;
+  in >> min_d >> max_d;
+  int n = max_d - min_d + 1;
+  int *coeff = new int[n];
   for (int i = 0; i < n; i++) {
-    coefficient[i] = v[n - 1 - i];
+    in >> coeff[i];
   }
-  polynomial = Polynomial(min_d, max_d, coefficient);
+  polynomial = Polynomial(min_d, max_d, coeff);
   return in;
+}
+
+double Polynomial::get(int value) {
+  double res = 0;
+  for (int i = n_ - 1, power = max_d_; i >= 0; i--, power--) {
+    res += coefficients_[i] * pow(value + 0.0, power + 0.0);
+  }
+  return res;
 }
 
 Polynomial operator+=(const Polynomial &p, int value) { return p + value; }

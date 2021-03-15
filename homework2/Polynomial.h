@@ -45,7 +45,8 @@ public:
   friend Polynomial operator*=(int value, const Polynomial& p);
   friend Polynomial operator/=(int value, const Polynomial& p);
 
-  int& operator[](int i) const;
+  int& operator[](int i);
+  int operator[](int i) const;
 
   friend std::ostream& operator<<(std::ostream& out, const Polynomial &polynomial);
   friend std::istream& operator>>(std::istream& in, Polynomial &polynomial);
@@ -54,6 +55,7 @@ public:
   int getN() const { return n_; };
   int getMinD() const { return min_d_; };
   int getMaxD() const { return max_d_; };
+  double get(int value);
 };
 
 
