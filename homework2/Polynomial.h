@@ -32,11 +32,13 @@ public:
   friend Polynomial operator*(const Polynomial& p, int value);
   friend Polynomial operator/(const Polynomial& p, int value);
 
+  //todo friend outside class
   friend Polynomial operator+(int value, const Polynomial& p  );
   friend Polynomial operator-(int value, const Polynomial& p);
   friend Polynomial operator*(int value, const Polynomial& p);
   friend Polynomial operator/(int value, const Polynomial& p);
 
+  //todo inside class
   friend Polynomial operator+=(const Polynomial& p, int value);
   friend Polynomial operator-=(const Polynomial& p, int value);
   friend Polynomial operator*=(const Polynomial& p, int value);

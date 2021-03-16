@@ -80,6 +80,7 @@ Polynomial operator+(const Polynomial &lhs, const Polynomial &rhs) {
   res.max_d_= MAX(lhs.max_d_, rhs.max_d_);
   res.n_ = res.max_d_ - res.min_d_ + 1;
   res.coefficients_ = new int[res.n_];
+  //todo S P A C E S
   for (int i = res.min_d_; i <= res.max_d_; i++) {
     if (i<=lhs.max_d_ && i<=rhs.max_d_ && i>=lhs.min_d_ && i>=rhs.min_d_) {
       res.coefficients_[i - res.min_d_] = lhs.coefficients_[i - lhs.min_d_] + rhs.coefficients_[i - rhs.min_d_];
@@ -92,6 +93,7 @@ Polynomial operator+(const Polynomial &lhs, const Polynomial &rhs) {
   return res;
 }
 
+//todo copy-paste +-
 Polynomial operator-(const Polynomial &lhs, const Polynomial &rhs) {
   if (lhs == Polynomial()) {
     return rhs;
@@ -139,7 +141,7 @@ Polynomial operator*(const Polynomial &lhs, const Polynomial &rhs) {
   return res;
 }
 
-
+//todo function
 #define GetLeftOperationResult(p, value, operation) {       \
   int *coefficients = new int[p.n_];                        \
   for (int i = 0; i < p.n_; i++) {                          \
@@ -353,6 +355,7 @@ double Polynomial::get(int value) {
   return res;
 }
 
+//todo + from +=
 Polynomial operator+=(const Polynomial &p, int value) { return p + value; }
 Polynomial operator-=(const Polynomial &p, int value) { return p - value; }
 Polynomial operator*=(const Polynomial &p, int value) { return p * value; }
