@@ -362,3 +362,10 @@ Polynomial operator+=(int value, const Polynomial &p) { return value + p; }
 Polynomial operator-=(int value, const Polynomial &p) { return value - p; }
 Polynomial operator*=(int value, const Polynomial &p) { return value * p; }
 Polynomial operator/=(int value, const Polynomial &p) { return value / p; }
+
+Polynomial &operator-(Polynomial &p) {
+  for (int i = 0; i < p.n_; i++) {
+    p.coefficients_[i] *= -1;
+  }
+  return p;
+}

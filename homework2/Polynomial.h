@@ -18,6 +18,8 @@ public:
   Polynomial& operator=(const Polynomial& other);
   ~Polynomial();
 
+  friend Polynomial& operator-(Polynomial& p);
+
   friend bool operator==(const Polynomial& lhs, const Polynomial& rhs);
   friend bool operator!=(const Polynomial& lhs, const Polynomial& rhs);
 
