@@ -49,6 +49,14 @@ Polynomial::~Polynomial() {
   delete[] coefficients_;
 }
 
+Polynomial Polynomial::operator-() const {
+  Polynomial res = *this;
+  for (int i = 0; i < res.n_; i++) {
+    res.coefficients_[i] *= -1;
+  }
+  return res;
+}
+
 bool checkForEquality(const Polynomial &big, const Polynomial &small) {
   for (int i = 0; i < small.n_; i++)
     if (big.coefficients_[i] != small.coefficients_[i])
@@ -377,10 +385,3 @@ Polynomial operator+=(int value, const Polynomial &p) { return value + p; }
 Polynomial operator-=(int value, const Polynomial &p) { return value - p; }
 Polynomial operator*=(int value, const Polynomial &p) { return value * p; }
 Polynomial operator/=(int value, const Polynomial &p) { return value / p; }
-
-Polynomial &operator-(Polynomial &p) {
-  for (int i = 0; i < p.n_; i++) {
-    p.coefficients_[i] *= -1;
-  }
-  return p;
-}

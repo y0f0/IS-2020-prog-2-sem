@@ -18,7 +18,7 @@ public:
   Polynomial& operator=(const Polynomial& other);
   ~Polynomial();
 
-  friend Polynomial& operator-(Polynomial& p);
+  Polynomial operator-() const;
 
   friend bool checkForEquality(const Polynomial& big, const Polynomial& small);
   friend bool operator==(const Polynomial& lhs, const Polynomial& rhs);
