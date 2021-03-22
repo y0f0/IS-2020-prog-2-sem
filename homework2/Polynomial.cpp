@@ -1,6 +1,6 @@
 #include "Polynomial.h"
 #include <fstream>
-#include <math.h>
+#include <cmath>
 
 using namespace std;
 
@@ -117,12 +117,12 @@ Polynomial getResultOfAddOrSubOperation(const Polynomial &lhs,
 }
 
 Polynomial operator+(const Polynomial &lhs, const Polynomial &rhs) {
-  return getResultOfAddOrSubOperation(lhs, rhs, 1);
+  return lhs += rhs;
 }
 
 //fixed copy-paste +-
 Polynomial operator-(const Polynomial &lhs, const Polynomial &rhs) {
-  return getResultOfAddOrSubOperation(lhs, rhs, -1);
+  return lhs -= rhs;
 }
 
 Polynomial operator*(const Polynomial &lhs, const Polynomial &rhs) {
@@ -309,5 +309,12 @@ double Polynomial::get(int value) {
 Polynomial Polynomial::operator*=(int value) const { return *this * value; }
 Polynomial Polynomial::operator/=(int value) const { return *this / value; }
 
-//todo + from +=
+//fixed + from +=
 
+Polynomial Polynomial::operator+=(const Polynomial &other) const {
+  return getResultOfAddOrSubOperation(*this, other, 1);
+}
+
+Polynomial Polynomial::operator-=(const Polynomial &other) const {
+  return getResultOfAddOrSubOperation(*this, other, -1);
+}
