@@ -31,27 +31,18 @@ public:
   friend Polynomial operator-(const Polynomial& lhs, const Polynomial& rhs);
   friend Polynomial operator*(const Polynomial& lhs, const Polynomial& rhs);
 
-  friend Polynomial operator+(const Polynomial& p, int value);
-  friend Polynomial operator-(const Polynomial& p, int value);
+  friend Polynomial getValueOperationResult(const Polynomial& p,
+                                            const int& value, char operation);
   friend Polynomial operator*(const Polynomial& p, int value);
-  friend Polynomial operator/(const Polynomial& p, int value);
-
-  //todo friend outside class
-  friend Polynomial operator+(int value, const Polynomial& p  );
-  friend Polynomial operator-(int value, const Polynomial& p);
   friend Polynomial operator*(int value, const Polynomial& p);
-  friend Polynomial operator/(int value, const Polynomial& p);
+  Polynomial operator/(int value) const;
 
-  //todo inside class
-  friend Polynomial operator+=(const Polynomial& p, int value);
-  friend Polynomial operator-=(const Polynomial& p, int value);
-  friend Polynomial operator*=(const Polynomial& p, int value);
-  friend Polynomial operator/=(const Polynomial& p, int value);
+  //fixed friend outside class
 
-  friend Polynomial operator+=(int value, const Polynomial& p);
-  friend Polynomial operator-=(int value, const Polynomial& p);
-  friend Polynomial operator*=(int value, const Polynomial& p);
-  friend Polynomial operator/=(int value, const Polynomial& p);
+  //fixed inside class
+  Polynomial operator*=(int value) const;
+  Polynomial operator/=(int value) const;
+
 
   int& operator[](int i);
   int operator[](int i) const;

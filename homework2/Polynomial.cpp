@@ -148,108 +148,52 @@ Polynomial operator*(const Polynomial &lhs, const Polynomial &rhs) {
   return res;
 }
 
-//todo function
-#define GetLeftOperationResult(p, value, operation) {       \
-  int *coefficients = new int[p.n_];                        \
-  for (int i = 0; i < p.n_; i++) {                          \
-    coefficients[i] = p.coefficients_[i] operation value;   \
-  }                                                         \
-  auto res = Polynomial();                                  \
-  res.min_d_ = p.min_d_;                                    \
-  res.max_d_ = p.max_d_;                                    \
-  for (int i = 0; i < p.n_; i++) {                          \
-    if (coefficients[i] == 0) {                             \
-      res.min_d_++;                                         \
-    } else {                                                \
-      break;                                                \
-    }                                                       \
-  }                                                         \
-  for (int i = p.n_ - 1; i >= 0; i--) {                     \
-    if (coefficients[i] == 0) {                             \
-      res.max_d_--;                                         \
-    } else {                                                \
-      break;                                                \
-    }                                                       \
-  }                                                         \
-  res.n_ = res.max_d_ - res.min_d_ + 1;                     \
-  int *coeff = new int[res.n_];                             \
-  for (int i = res.min_d_; i <= res.max_d_; i++)  {         \
-    coeff[i - res.min_d_] = coefficients[i - p.min_d_];     \
-  }                                                         \
-  res.coefficients_ = coeff;                                \
-  return res;                                               \
-}
-
-Polynomial operator+(const Polynomial &p, int value) {
-  GetLeftOperationResult(p, value, +);
-}
-
-Polynomial operator-(const Polynomial &p, int value) {
-  GetLeftOperationResult(p, value, -);
-}
-
-Polynomial operator*(const Polynomial &p, int value) {
-  GetLeftOperationResult(p, value, *);
-}
-
-Polynomial operator/(const Polynomial &p, int value) {
-  if (value == 0) {
-    throw std::invalid_argument("Error: Zero division.");
-  }
-  GetLeftOperationResult(p, value, /);
-}
-
-#define GetRightOperationResult(p, value, operation) {      \
-  int *coefficients = new int[p.n_];                        \
-  for (int i = 0; i < p.n_; i++) {                          \
-    coefficients[i] = value operation p.coefficients_[i];   \
-  }                                                         \
-  auto res = Polynomial();                                  \
-  res.min_d_ = p.min_d_;                                    \
-  res.max_d_ = p.max_d_;                                    \
-  for (int i = 0; i < p.n_; i++) {                          \
-    if (coefficients[i] == 0) {                             \
-      res.min_d_++;                                         \
-    } else {                                                \
-      break;                                                \
-    }                                                       \
-  }                                                         \
-  for (int i = p.n_ - 1; i >= 0; i--) {                     \
-    if (coefficients[i] == 0) {                             \
-      res.max_d_--;                                         \
-    } else {                                                \
-      break;                                                \
-    }                                                       \
-  }                                                         \
-  res.n_ = res.max_d_ - res.min_d_ + 1;                     \
-  int *coeff = new int[res.n_];                             \
-  for (int i = res.min_d_; i <= res.max_d_; i++)  {         \
-    coeff[i - res.min_d_] = coefficients[i - p.min_d_];     \
-  }                                                         \
-  res.coefficients_ = coeff;                                \
-  return res;                                               \
-}
-
-Polynomial operator+(int value, const Polynomial & p) {
-  GetRightOperationResult(p, value, +);
-}
-
-Polynomial operator-(int value, const Polynomial & p) {
-  GetRightOperationResult(p, value, -);
-}
-
-Polynomial operator*(int value, const Polynomial & p) {
-  GetRightOperationResult(p, value, *);
-}
-
-Polynomial operator/(int value, const Polynomial & p) {
+//fixed function
+Polynomial getValueOperationResult(const Polynomial& p, const int& value,
+                                   char operation) {
   int *coefficients = new int[p.n_];
   for (int i = 0; i < p.n_; i++) {
-    if (p.coefficients_[i]) {
-      coefficients[i] = value / p.coefficients_[i];
-    }
+    if (operation == '*')
+      coefficients[i] = p.coefficients_[i] * value;
+    else
+      coefficients[i] = p.coefficients_[i] / value;
   }
-  return Polynomial(p.min_d_, p.max_d_, coefficients);
+  auto res = Polynomial();
+  res.min_d_ = p.min_d_;
+  res.max_d_ = p.max_d_;
+  for (int i = 0; i < p.n_; i++) {
+    if (coefficients[i] == 0)
+      res.min_d_++;
+    else
+      break;
+  }
+  for (int i = p.n_ - 1; i >= 0; i--) {
+    if (coefficients[i] == 0)
+      res.max_d_--;
+    else
+      break;
+  }
+  res.n_ = res.max_d_ - res.min_d_ + 1;
+  int *new_coefficients = new int[res.n_];
+  for (int i = res.min_d_; i <= res.max_d_; i++)  {
+    new_coefficients[i - res.min_d_] = coefficients[i - p.min_d_];
+  }
+  res.coefficients_ = new_coefficients;
+  return res;
+}
+
+Polynomial operator*(const Polynomial& p, int value) {
+  return getValueOperationResult(p, value, '*');
+}
+
+Polynomial operator*(int value, const Polynomial& p) {
+  return getValueOperationResult(p, value, '*');
+}
+
+Polynomial Polynomial::operator/(int value) const {
+  if (value != 0)
+    return getValueOperationResult(*this, value, '/');
+  throw invalid_argument("Error : division by zero");
 }
 
 int& Polynomial::operator[](int i) {
@@ -362,13 +306,8 @@ double Polynomial::get(int value) {
   return res;
 }
 
-//todo + from +=
-Polynomial operator+=(const Polynomial &p, int value) { return p + value; }
-Polynomial operator-=(const Polynomial &p, int value) { return p - value; }
-Polynomial operator*=(const Polynomial &p, int value) { return p * value; }
-Polynomial operator/=(const Polynomial &p, int value) { return p / value; }
+Polynomial Polynomial::operator*=(int value) const { return *this * value; }
+Polynomial Polynomial::operator/=(int value) const { return *this / value; }
 
-Polynomial operator+=(int value, const Polynomial &p) { return value + p; }
-Polynomial operator-=(int value, const Polynomial &p) { return value - p; }
-Polynomial operator*=(int value, const Polynomial &p) { return value * p; }
-Polynomial operator/=(int value, const Polynomial &p) { return value / p; }
+//todo + from +=
+
