@@ -88,7 +88,8 @@ bool operator!=(const Polynomial &lhs, const Polynomial &rhs) {
 #define MIN(a, b) ((a<b) ? (a) : (b))
 #define MAX(a, b) ((a>b) ? (a) : (b))
 
-Polynomial operator+(const Polynomial &lhs, const Polynomial &rhs) {
+Polynomial getResultOfAddOrSubOperation(const Polynomial &lhs,
+                                     const Polynomial &rhs, int operation) {
   if (lhs == Polynomial()) {
     return rhs;
   }
@@ -100,10 +101,12 @@ Polynomial operator+(const Polynomial &lhs, const Polynomial &rhs) {
   res.max_d_= MAX(lhs.max_d_, rhs.max_d_);
   res.n_ = res.max_d_ - res.min_d_ + 1;
   res.coefficients_ = new int[res.n_];
-  //todo S P A C E S
+  //fixed S P A C E S
   for (int i = res.min_d_; i <= res.max_d_; i++) {
-    if (i<=lhs.max_d_ && i<=rhs.max_d_ && i>=lhs.min_d_ && i>=rhs.min_d_) {
-      res.coefficients_[i - res.min_d_] = lhs.coefficients_[i - lhs.min_d_] + rhs.coefficients_[i - rhs.min_d_];
+    if (i <= lhs.max_d_ && i <= rhs.max_d_ && i >= lhs.min_d_
+        && i >= rhs.min_d_) {
+      res.coefficients_[i - res.min_d_] = lhs.coefficients_[i - lhs.min_d_]
+                            + operation * rhs.coefficients_[i - rhs.min_d_];
     } else if (i <= lhs.max_d_ && i >= lhs.min_d_) {
       res.coefficients_[i - res.min_d_] = lhs.coefficients_[i - lhs.min_d_];
     } else if (i <= rhs.max_d_ && i >= rhs.min_d_) {
@@ -113,29 +116,13 @@ Polynomial operator+(const Polynomial &lhs, const Polynomial &rhs) {
   return res;
 }
 
-//todo copy-paste +-
+Polynomial operator+(const Polynomial &lhs, const Polynomial &rhs) {
+  return getResultOfAddOrSubOperation(lhs, rhs, 1);
+}
+
+//fixed copy-paste +-
 Polynomial operator-(const Polynomial &lhs, const Polynomial &rhs) {
-  if (lhs == Polynomial()) {
-    return rhs;
-  }
-  if (rhs == Polynomial()) {
-    return lhs;
-  }
-  auto res = Polynomial();
-  res.min_d_ = MIN(lhs.min_d_, rhs.min_d_);
-  res.max_d_= MAX(lhs.max_d_, rhs.max_d_);
-  res.n_ = res.max_d_ - res.min_d_ + 1;
-  res.coefficients_ = new int[res.n_];
-  for (int i = res.min_d_; i <= res.max_d_; i++) {
-    if (i<=lhs.max_d_ && i<=rhs.max_d_ && i>=lhs.min_d_ && i>=rhs.min_d_) {
-      res.coefficients_[i - res.min_d_] = lhs.coefficients_[i - lhs.min_d_] - rhs.coefficients_[i - rhs.min_d_];
-    } else if (i <= lhs.max_d_ && i >= lhs.min_d_) {
-      res.coefficients_[i - res.min_d_] = lhs.coefficients_[i - lhs.min_d_];
-    } else if (i <= rhs.max_d_ && i >= rhs.min_d_) {
-      res.coefficients_[i - res.min_d_] = -rhs.coefficients_[i - rhs.min_d_];
-    }
-  }
-  return res;
+  return getResultOfAddOrSubOperation(lhs, rhs, -1);
 }
 
 Polynomial operator*(const Polynomial &lhs, const Polynomial &rhs) {

@@ -24,6 +24,9 @@ public:
   friend bool operator==(const Polynomial& lhs, const Polynomial& rhs);
   friend bool operator!=(const Polynomial& lhs, const Polynomial& rhs);
 
+  friend Polynomial getResultOfAddOrSubOperation(const Polynomial& lhs,
+                                                     const Polynomial& rhs,
+                                                     int operation);
   friend Polynomial operator+(const Polynomial& lhs, const Polynomial& rhs);
   friend Polynomial operator-(const Polynomial& lhs, const Polynomial& rhs);
   friend Polynomial operator*(const Polynomial& lhs, const Polynomial& rhs);
