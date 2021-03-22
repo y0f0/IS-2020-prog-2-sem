@@ -20,6 +20,7 @@ public:
 
   friend Polynomial& operator-(Polynomial& p);
 
+  friend bool checkForEquality(const Polynomial& big, const Polynomial& small);
   friend bool operator==(const Polynomial& lhs, const Polynomial& rhs);
   friend bool operator!=(const Polynomial& lhs, const Polynomial& rhs);
 

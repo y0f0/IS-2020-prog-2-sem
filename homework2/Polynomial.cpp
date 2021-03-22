@@ -49,16 +49,28 @@ Polynomial::~Polynomial() {
   delete[] coefficients_;
 }
 
-bool operator==(const Polynomial &lhs, const Polynomial &rhs) {
-  if (lhs.min_d_ != rhs.min_d_ || lhs.max_d_ != rhs.max_d_) {
-    return false;
-  }
-  for (int i = 0; i < lhs.n_; i++) {
-    if (lhs.coefficients_[i] != rhs.coefficients_[i]) {
+bool checkForEquality(const Polynomial &big, const Polynomial &small) {
+  for (int i = 0; i < small.n_; i++)
+    if (big.coefficients_[i] != small.coefficients_[i])
       return false;
-    }
-  }
+
+  for (int i = small.n_; i < big.n_; i++)
+    if (big.coefficients_[i] != 0)
+      return false;
+
   return true;
+}
+
+bool operator==(const Polynomial &lhs, const Polynomial &rhs) {
+  if (lhs.n_ == 0 && rhs.n_ == 0)
+    return true;
+  else if (!(lhs.n_ && rhs.n_))
+    return false;
+
+  if (lhs.n_ > rhs.n_)
+    return checkForEquality(lhs, rhs);
+
+  return checkForEquality(rhs, lhs);
 }
 
 bool operator!=(const Polynomial &lhs, const Polynomial &rhs) {
