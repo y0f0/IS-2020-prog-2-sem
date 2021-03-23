@@ -101,7 +101,6 @@ Polynomial getResultOfAddOrSubOperation(const Polynomial &lhs,
   res.max_d_= MAX(lhs.max_d_, rhs.max_d_);
   res.n_ = res.max_d_ - res.min_d_ + 1;
   res.coefficients_ = new int[res.n_];
-  //fixed S P A C E S
   for (int i = res.min_d_; i <= res.max_d_; i++) {
     if (i <= lhs.max_d_ && i <= rhs.max_d_ && i >= lhs.min_d_
         && i >= rhs.min_d_) {
@@ -120,7 +119,7 @@ Polynomial operator+(const Polynomial &lhs, const Polynomial &rhs) {
   return lhs += rhs;
 }
 
-//fixed copy-paste +-
+
 Polynomial operator-(const Polynomial &lhs, const Polynomial &rhs) {
   return lhs -= rhs;
 }
@@ -309,7 +308,6 @@ double Polynomial::get(int value) {
 Polynomial Polynomial::operator*=(int value) const { return *this * value; }
 Polynomial Polynomial::operator/=(int value) const { return *this / value; }
 
-//fixed + from +=
 
 Polynomial Polynomial::operator+=(const Polynomial &other) const {
   return getResultOfAddOrSubOperation(*this, other, 1);

@@ -40,6 +40,7 @@ public:
   //fixed friend outside class
 
   //fixed inside class
+  //todo Polynomial&
   Polynomial operator*=(int value) const;
   Polynomial operator/=(int value) const;
 
