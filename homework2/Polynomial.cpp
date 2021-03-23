@@ -116,12 +116,26 @@ Polynomial getResultOfAddOrSubOperation(const Polynomial &lhs,
 }
 
 Polynomial operator+(const Polynomial &lhs, const Polynomial &rhs) {
-  return getResultOfAddOrSubOperation(lhs, rhs, 1);
+  if (lhs == Polynomial()) {
+    return rhs;
+  }
+  if (rhs == Polynomial()) {
+    return lhs;
+  }
+
+  return Polynomial(lhs) += rhs;
 }
 
 
 Polynomial operator-(const Polynomial &lhs, const Polynomial &rhs) {
-  return getResultOfAddOrSubOperation(lhs, rhs, 1);
+  if (lhs == Polynomial()) {
+    return rhs;
+  }
+  if (rhs == Polynomial()) {
+    return lhs;
+  }
+
+  return Polynomial(lhs) -= rhs;
 }
 
 Polynomial operator*(const Polynomial &lhs, const Polynomial &rhs) {
@@ -182,17 +196,21 @@ Polynomial getValueOperationResult(const Polynomial& p, const int& value,
 }
 
 Polynomial operator*(const Polynomial& p, int value) {
-  return getValueOperationResult(p, value, '*');
+  if (value == 1)
+    return p;
+  return Polynomial(p) *= value;
 }
 
 Polynomial operator*(int value, const Polynomial& p) {
-  return getValueOperationResult(p, value, '*');
+  if (value == 1)
+    return p;
+  return Polynomial(p) *= value;
 }
 
 Polynomial Polynomial::operator/(int value) const {
-  if (value != 0)
-    return getValueOperationResult(*this, value, '/');
-  throw invalid_argument("Error : division by zero");
+  if (value == 1)
+    return *this;
+  return Polynomial(*this) /= value;
 }
 
 int& Polynomial::operator[](int i) {
@@ -305,9 +323,17 @@ double Polynomial::get(int value) {
   return res;
 }
 
-Polynomial& Polynomial::operator*=(int value) { *this = *this * value; return *this; }
-Polynomial& Polynomial::operator/=(int value) { *this = *this / value; return *this; }
+Polynomial& Polynomial::operator*=(int value) {
+  *this = getValueOperationResult(*this, value, '*');
+  return *this;
+}
 
+Polynomial& Polynomial::operator/=(int value) {
+  if (value == 0)
+    throw invalid_argument("Error : division by zero");
+  *this = getValueOperationResult(*this, value, '/');
+  return *this;
+}
 
 Polynomial& Polynomial::operator+=(const Polynomial &other) {
   *this = getResultOfAddOrSubOperation(*this, other, 1);
