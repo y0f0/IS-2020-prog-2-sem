@@ -305,8 +305,8 @@ double Polynomial::get(int value) {
   return res;
 }
 
-Polynomial Polynomial::operator*=(int value) const { return *this * value; }
-Polynomial Polynomial::operator/=(int value) const { return *this / value; }
+Polynomial& Polynomial::operator*=(int value) const { return *(new Polynomial(*this * value)); }
+Polynomial& Polynomial::operator/=(int value) const { return *(new Polynomial(*this / value)); }
 
 
 Polynomial Polynomial::operator+=(const Polynomial &other) const {
