@@ -41,11 +41,11 @@ public:
 
   //fixed inside class
   //fixed Polynomial&
-  Polynomial& operator*=(int value) const;
-  Polynomial& operator/=(int value) const;
+  Polynomial& operator*=(int value);
+  Polynomial& operator/=(int value);
 
-  Polynomial operator+=(const Polynomial& other) const;
-  Polynomial operator-=(const Polynomial& other) const;
+  Polynomial& operator+=(const Polynomial& other);
+  Polynomial& operator-=(const Polynomial& other);
 
   int& operator[](int i);
   int operator[](int i) const;

@@ -116,12 +116,12 @@ Polynomial getResultOfAddOrSubOperation(const Polynomial &lhs,
 }
 
 Polynomial operator+(const Polynomial &lhs, const Polynomial &rhs) {
-  return lhs += rhs;
+  return getResultOfAddOrSubOperation(lhs, rhs, 1);
 }
 
 
 Polynomial operator-(const Polynomial &lhs, const Polynomial &rhs) {
-  return lhs -= rhs;
+  return getResultOfAddOrSubOperation(lhs, rhs, 1);
 }
 
 Polynomial operator*(const Polynomial &lhs, const Polynomial &rhs) {
@@ -305,14 +305,16 @@ double Polynomial::get(int value) {
   return res;
 }
 
-Polynomial& Polynomial::operator*=(int value) const { return *(new Polynomial(*this * value)); }
-Polynomial& Polynomial::operator/=(int value) const { return *(new Polynomial(*this / value)); }
+Polynomial& Polynomial::operator*=(int value) { *this = *this * value; return *this; }
+Polynomial& Polynomial::operator/=(int value) { *this = *this / value; return *this; }
 
 
-Polynomial Polynomial::operator+=(const Polynomial &other) const {
-  return getResultOfAddOrSubOperation(*this, other, 1);
+Polynomial& Polynomial::operator+=(const Polynomial &other) {
+  *this = getResultOfAddOrSubOperation(*this, other, 1);
+  return *this;
 }
 
-Polynomial Polynomial::operator-=(const Polynomial &other) const {
-  return getResultOfAddOrSubOperation(*this, other, -1);
+Polynomial& Polynomial::operator-=(const Polynomial &other) {
+  *this = getResultOfAddOrSubOperation(*this, other, -1);
+  return *this;
 }
