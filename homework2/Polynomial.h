@@ -44,6 +44,7 @@ public:
                                                   int operation);
   Polynomial& operator+=(const Polynomial& other);
   Polynomial& operator-=(const Polynomial& other);
+  Polynomial& operator*=(const Polynomial& other);
 
   int& operator[](int i);
   int operator[](int i) const;

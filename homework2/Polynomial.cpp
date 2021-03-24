@@ -102,26 +102,7 @@ Polynomial operator-(const Polynomial &lhs, const Polynomial &rhs) {
 }
 
 Polynomial operator*(const Polynomial &lhs, const Polynomial &rhs) {
-  if (lhs == Polynomial() || rhs == Polynomial()) {
-    return Polynomial();
-  }
-
-  auto res = Polynomial();
-  res.min_d_ = lhs.min_d_ + rhs.min_d_;
-  res.max_d_= lhs.max_d_ + rhs.max_d_;
-  res.n_ = res.max_d_ - res.min_d_ + 1;
-  res.coefficients_ = new int[res.n_];
-  for (int i = lhs.min_d_; i <= lhs.max_d_; i++) {
-    for (int j = rhs.min_d_; j <= rhs.max_d_; j++) {
-      res.coefficients_[i + j - res.min_d_] = 0;
-    }
-  }
-  for (int i = lhs.min_d_; i <= lhs.max_d_; i++) {
-    for (int j = rhs.min_d_; j <= rhs.max_d_; j++) {
-      res.coefficients_[i + j - res.min_d_] += lhs.coefficients_[i - lhs.min_d_] * rhs.coefficients_[j - rhs.min_d_];
-    }
-  }
-  return res;
+  return Polynomial(lhs) *= rhs;
 }
 
 Polynomial operator*(const Polynomial& p, int value) {
@@ -198,6 +179,21 @@ Polynomial& Polynomial::operator+=(const Polynomial &other) {
 
 Polynomial& Polynomial::operator-=(const Polynomial &other) {
   return getResultOfAddOrSubOperation(other, -1);
+}
+
+Polynomial &Polynomial::operator*=(const Polynomial &other) {
+  if (*this == Polynomial() || other == Polynomial()) {
+    return * new Polynomial();
+  }
+  auto copy = *this;
+  for (int i = this->min_d_; i <= this->max_d_; i++)
+      (*this)[i] = 0;
+
+  for (int i = copy.min_d_; i <= copy.max_d_; i++)
+    for (int j = other.min_d_; j <= other.max_d_; j++)
+      (*this)[i + j] += copy[i] * other[j];
+
+  return *this;
 }
 
 int& Polynomial::operator[](int i) {
@@ -309,4 +305,3 @@ double Polynomial::get(int value) {
   }
   return res;
 }
-
