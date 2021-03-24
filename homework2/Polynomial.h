@@ -23,15 +23,10 @@ public:
   friend bool operator==(const Polynomial& lhs, const Polynomial& rhs);
   friend bool operator!=(const Polynomial& lhs, const Polynomial& rhs);
 
-  friend Polynomial getResultOfAddOrSubOperation(const Polynomial& lhs,
-                                                     const Polynomial& rhs,
-                                                     int operation);
   friend Polynomial operator+(const Polynomial& lhs, const Polynomial& rhs);
   friend Polynomial operator-(const Polynomial& lhs, const Polynomial& rhs);
   friend Polynomial operator*(const Polynomial& lhs, const Polynomial& rhs);
 
-  friend Polynomial getValueOperationResult(const Polynomial& p,
-                                            const int& value, char operation);
   friend Polynomial operator*(const Polynomial& p, int value);
   friend Polynomial operator*(int value, const Polynomial& p);
   Polynomial operator/(int value) const;
@@ -40,9 +35,14 @@ public:
 
   //fixed inside class
   //fixed Polynomial&
+  friend Polynomial& getValueOperationResult(Polynomial* p, const int& value,
+                                             char operation);
   Polynomial& operator*=(int value);
   Polynomial& operator/=(int value);
 
+  friend Polynomial getResultOfAddOrSubOperation(const Polynomial& lhs,
+                                                 const Polynomial& rhs,
+                                                 int operation);
   Polynomial& operator+=(const Polynomial& other);
   Polynomial& operator-=(const Polynomial& other);
 

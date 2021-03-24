@@ -77,32 +77,6 @@ bool operator!=(const Polynomial &lhs, const Polynomial &rhs) {
   return !(lhs == rhs);
 }
 
-Polynomial getResultOfAddOrSubOperation(const Polynomial &lhs,
-                                     const Polynomial &rhs, int operation) {
-  if (lhs == Polynomial()) {
-    return rhs;
-  }
-  if (rhs == Polynomial()) {
-    return lhs;
-  }
-  auto res = Polynomial();
-  res.min_d_ = MIN(lhs.min_d_, rhs.min_d_);
-  res.max_d_= MAX(lhs.max_d_, rhs.max_d_);
-  res.n_ = res.max_d_ - res.min_d_ + 1;
-  res.coefficients_ = new int[res.n_];
-  for (int i = res.min_d_; i <= res.max_d_; i++) {
-    if (i <= lhs.max_d_ && i <= rhs.max_d_ && i >= lhs.min_d_
-        && i >= rhs.min_d_) {
-      res.coefficients_[i - res.min_d_] = lhs.coefficients_[i - lhs.min_d_]
-                            + operation * rhs.coefficients_[i - rhs.min_d_];
-    } else if (i <= lhs.max_d_ && i >= lhs.min_d_) {
-      res.coefficients_[i - res.min_d_] = lhs.coefficients_[i - lhs.min_d_];
-    } else if (i <= rhs.max_d_ && i >= rhs.min_d_) {
-      res.coefficients_[i - res.min_d_] = rhs.coefficients_[i - rhs.min_d_];
-    }
-  }
-  return res;
-}
 
 Polynomial operator+(const Polynomial &lhs, const Polynomial &rhs) {
   if (lhs == Polynomial()) {
@@ -150,39 +124,6 @@ Polynomial operator*(const Polynomial &lhs, const Polynomial &rhs) {
   return res;
 }
 
-//fixed function
-Polynomial getValueOperationResult(const Polynomial& p, const int& value,
-                                   char operation) {
-  int *coefficients = new int[p.n_];
-  for (int i = 0; i < p.n_; i++) {
-    if (operation == '*')
-      coefficients[i] = p.coefficients_[i] * value;
-    else
-      coefficients[i] = p.coefficients_[i] / value;
-  }
-  auto res = Polynomial();
-  res.min_d_ = p.min_d_;
-  res.max_d_ = p.max_d_;
-  for (int i = 0; i < p.n_; i++) {
-    if (coefficients[i] == 0)
-      res.min_d_++;
-    else
-      break;
-  }
-  for (int i = p.n_ - 1; i >= 0; i--) {
-    if (coefficients[i] == 0)
-      res.max_d_--;
-    else
-      break;
-  }
-  res.n_ = res.max_d_ - res.min_d_ + 1;
-  int *new_coefficients = new int[res.n_];
-  for (int i = res.min_d_; i <= res.max_d_; i++)  {
-    new_coefficients[i - res.min_d_] = coefficients[i - p.min_d_];
-  }
-  res.coefficients_ = new_coefficients;
-  return res;
-}
 
 Polynomial operator*(const Polynomial& p, int value) {
   if (value == 1)
@@ -312,16 +253,72 @@ double Polynomial::get(int value) {
   return res;
 }
 
+//fixed function
+Polynomial& getValueOperationResult(Polynomial* p, const int& value,
+                                    char operation) {
+  int *coefficients = new int[p->n_];
+  for (int i = 0; i < p->n_; i++) {
+    if (operation == '*')
+      coefficients[i] = p->coefficients_[i] * value;
+    else
+      coefficients[i] = p->coefficients_[i] / value;
+  }
+  for (int i = 0; i < p->n_; i++) {
+    if (coefficients[i] == 0)
+      p->min_d_++;
+    else
+      break;
+  }
+  for (int i = p->n_ - 1; i >= 0; i--) {
+    if (coefficients[i] == 0)
+      p->max_d_--;
+    else
+      break;
+  }
+  p->n_ = p->max_d_ - p->min_d_ + 1;
+  int *new_coefficients = new int[p->n_];
+  for (int i = p->min_d_; i <= p->max_d_; i++)  {
+    new_coefficients[i - p->min_d_] = coefficients[i - p->min_d_];
+  }
+  p->coefficients_ = new_coefficients;
+  return *p;
+}
+
 Polynomial& Polynomial::operator*=(int value) {
-  *this = getValueOperationResult(*this, value, '*');
-  return *this;
+  return getValueOperationResult(this, value, '*');
 }
 
 Polynomial& Polynomial::operator/=(int value) {
   if (value == 0)
     throw invalid_argument("Error : division by zero");
-  *this = getValueOperationResult(*this, value, '/');
-  return *this;
+  return getValueOperationResult(this, value, '/');
+}
+
+Polynomial getResultOfAddOrSubOperation(const Polynomial &lhs,
+                                        const Polynomial &rhs, int operation) {
+  if (lhs == Polynomial()) {
+    return rhs;
+  }
+  if (rhs == Polynomial()) {
+    return lhs;
+  }
+  auto res = Polynomial();
+  res.min_d_ = MIN(lhs.min_d_, rhs.min_d_);
+  res.max_d_= MAX(lhs.max_d_, rhs.max_d_);
+  res.n_ = res.max_d_ - res.min_d_ + 1;
+  res.coefficients_ = new int[res.n_];
+  for (int i = res.min_d_; i <= res.max_d_; i++) {
+    if (i <= lhs.max_d_ && i <= rhs.max_d_ && i >= lhs.min_d_
+        && i >= rhs.min_d_) {
+      res.coefficients_[i - res.min_d_] = lhs.coefficients_[i - lhs.min_d_]
+                                          + operation * rhs.coefficients_[i - rhs.min_d_];
+    } else if (i <= lhs.max_d_ && i >= lhs.min_d_) {
+      res.coefficients_[i - res.min_d_] = lhs.coefficients_[i - lhs.min_d_];
+    } else if (i <= rhs.max_d_ && i >= rhs.min_d_) {
+      res.coefficients_[i - res.min_d_] = rhs.coefficients_[i - rhs.min_d_];
+    }
+  }
+  return res;
 }
 
 Polynomial& Polynomial::operator+=(const Polynomial &other) {
