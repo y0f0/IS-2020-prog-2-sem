@@ -124,7 +124,6 @@ Polynomial operator*(const Polynomial &lhs, const Polynomial &rhs) {
   return res;
 }
 
-
 Polynomial operator*(const Polynomial& p, int value) {
   if (value == 1)
     return p;
@@ -141,6 +140,64 @@ Polynomial Polynomial::operator/(int value) const {
   if (value == 1)
     return *this;
   return Polynomial(*this) /= value;
+}
+
+//fixed function
+Polynomial& getValueOperationResult(Polynomial* p, const int& value,
+                                    char operation) {
+  int *coefficients = new int[p->n_];
+  for (int i = 0; i < p->n_; i++) {
+    if (operation == '*')
+      coefficients[i] = p->coefficients_[i] * value;
+    else
+      coefficients[i] = p->coefficients_[i] / value;
+  }
+  for (int i = 0; i < p->n_; i++) {
+    if (coefficients[i] == 0)
+      p->min_d_++;
+    else
+      break;
+  }
+  for (int i = p->n_ - 1; i >= 0; i--) {
+    if (coefficients[i] == 0)
+      p->max_d_--;
+    else
+      break;
+  }
+  p->n_ = p->max_d_ - p->min_d_ + 1;
+  int *new_coefficients = new int[p->n_];
+  for (int i = p->min_d_; i <= p->max_d_; i++)  {
+    new_coefficients[i - p->min_d_] = coefficients[i - p->min_d_];
+  }
+  p->coefficients_ = new_coefficients;
+  return *p;
+}
+
+Polynomial& Polynomial::operator*=(int value) {
+  return getValueOperationResult(this, value, '*');
+}
+
+Polynomial& Polynomial::operator/=(int value) {
+  if (value == 0)
+    throw invalid_argument("Error : division by zero");
+  return getValueOperationResult(this, value, '/');
+}
+
+Polynomial& Polynomial::getResultOfAddOrSubOperation(const Polynomial &other,
+                                                     int operation) {
+  for (int i = MIN(min_d_, other.min_d_); i <= MAX(max_d_, other.max_d_);
+                                             i++)
+    if (i <= other.max_d_ && i >= other.min_d_)
+      (*this)[i] += operation * other[i];
+  return *this;
+}
+
+Polynomial& Polynomial::operator+=(const Polynomial &other) {
+  return getResultOfAddOrSubOperation(other, 1);
+}
+
+Polynomial& Polynomial::operator-=(const Polynomial &other) {
+  return getResultOfAddOrSubOperation(other, -1);
 }
 
 int& Polynomial::operator[](int i) {
@@ -253,60 +310,3 @@ double Polynomial::get(int value) {
   return res;
 }
 
-//fixed function
-Polynomial& getValueOperationResult(Polynomial* p, const int& value,
-                                    char operation) {
-  int *coefficients = new int[p->n_];
-  for (int i = 0; i < p->n_; i++) {
-    if (operation == '*')
-      coefficients[i] = p->coefficients_[i] * value;
-    else
-      coefficients[i] = p->coefficients_[i] / value;
-  }
-  for (int i = 0; i < p->n_; i++) {
-    if (coefficients[i] == 0)
-      p->min_d_++;
-    else
-      break;
-  }
-  for (int i = p->n_ - 1; i >= 0; i--) {
-    if (coefficients[i] == 0)
-      p->max_d_--;
-    else
-      break;
-  }
-  p->n_ = p->max_d_ - p->min_d_ + 1;
-  int *new_coefficients = new int[p->n_];
-  for (int i = p->min_d_; i <= p->max_d_; i++)  {
-    new_coefficients[i - p->min_d_] = coefficients[i - p->min_d_];
-  }
-  p->coefficients_ = new_coefficients;
-  return *p;
-}
-
-Polynomial& Polynomial::operator*=(int value) {
-  return getValueOperationResult(this, value, '*');
-}
-
-Polynomial& Polynomial::operator/=(int value) {
-  if (value == 0)
-    throw invalid_argument("Error : division by zero");
-  return getValueOperationResult(this, value, '/');
-}
-
-Polynomial& Polynomial::getResultOfAddOrSubOperation(const Polynomial &other,
-                                                     int operation) {
-  for (int i = MIN(min_d_, other.min_d_); i <= MAX(max_d_, other.max_d_);
-                                             i++)
-    if (i <= other.max_d_ && i >= other.min_d_)
-      (*this)[i] += operation * other[i];
-  return *this;
-}
-
-Polynomial& Polynomial::operator+=(const Polynomial &other) {
-  return getResultOfAddOrSubOperation(other, 1);
-}
-
-Polynomial& Polynomial::operator-=(const Polynomial &other) {
-  return getResultOfAddOrSubOperation(other, -1);
-}
