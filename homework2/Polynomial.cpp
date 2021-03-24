@@ -2,6 +2,10 @@
 #include <fstream>
 #include <cmath>
 
+
+#define MIN(a, b) ((a<b) ? (a) : (b))
+#define MAX(a, b) ((a>b) ? (a) : (b))
+
 using namespace std;
 
 Polynomial::Polynomial()
@@ -57,36 +61,21 @@ Polynomial Polynomial::operator-() const {
   return res;
 }
 
-bool checkForEquality(const Polynomial &big, const Polynomial &small) {
-  for (int i = 0; i < small.n_; i++)
-    if (big.coefficients_[i] != small.coefficients_[i])
-      return false;
-
-  for (int i = small.n_; i < big.n_; i++)
-    if (big.coefficients_[i] != 0)
-      return false;
-
-  return true;
-}
-
 bool operator==(const Polynomial &lhs, const Polynomial &rhs) {
   if (lhs.n_ == 0 && rhs.n_ == 0)
     return true;
   else if (!(lhs.n_ && rhs.n_))
     return false;
-
-  if (lhs.n_ > rhs.n_)
-    return checkForEquality(lhs, rhs);
-
-  return checkForEquality(rhs, lhs);
+  for (int i = MIN(lhs.min_d_, rhs.min_d_);
+           i < MAX(lhs.max_d_,rhs.max_d_); i++)
+    if (lhs[i] != rhs[i])
+      return false;
+  return true;
 }
 
 bool operator!=(const Polynomial &lhs, const Polynomial &rhs) {
   return !(lhs == rhs);
 }
-
-#define MIN(a, b) ((a<b) ? (a) : (b))
-#define MAX(a, b) ((a>b) ? (a) : (b))
 
 Polynomial getResultOfAddOrSubOperation(const Polynomial &lhs,
                                      const Polynomial &rhs, int operation) {
