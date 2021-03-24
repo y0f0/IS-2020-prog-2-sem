@@ -150,7 +150,7 @@ int& Polynomial::operator[](int i) {
       new_coeff[j] = 0;
     }
     for (int j = 0; j < n_; j++) {
-      new_coeff[max_d_ - i - n_] = coefficients_[j];
+      new_coeff[j + max_d_ - i + 1 - n_] = coefficients_[j];
     }
     min_d_ = i;
     n_ = max_d_ - min_d_ + 1;
@@ -294,39 +294,19 @@ Polynomial& Polynomial::operator/=(int value) {
   return getValueOperationResult(this, value, '/');
 }
 
-Polynomial getResultOfAddOrSubOperation(const Polynomial &lhs,
-                                        const Polynomial &rhs, int operation) {
-  if (lhs == Polynomial()) {
-    return rhs;
-  }
-  if (rhs == Polynomial()) {
-    return lhs;
-  }
-  auto res = Polynomial();
-  res.min_d_ = MIN(lhs.min_d_, rhs.min_d_);
-  res.max_d_= MAX(lhs.max_d_, rhs.max_d_);
-  res.n_ = res.max_d_ - res.min_d_ + 1;
-  res.coefficients_ = new int[res.n_];
-  for (int i = res.min_d_; i <= res.max_d_; i++) {
-    if (i <= lhs.max_d_ && i <= rhs.max_d_ && i >= lhs.min_d_
-        && i >= rhs.min_d_) {
-      res.coefficients_[i - res.min_d_] = lhs.coefficients_[i - lhs.min_d_]
-                                          + operation * rhs.coefficients_[i - rhs.min_d_];
-    } else if (i <= lhs.max_d_ && i >= lhs.min_d_) {
-      res.coefficients_[i - res.min_d_] = lhs.coefficients_[i - lhs.min_d_];
-    } else if (i <= rhs.max_d_ && i >= rhs.min_d_) {
-      res.coefficients_[i - res.min_d_] = rhs.coefficients_[i - rhs.min_d_];
-    }
-  }
-  return res;
+Polynomial& Polynomial::getResultOfAddOrSubOperation(const Polynomial &other,
+                                                     int operation) {
+  for (int i = MIN(min_d_, other.min_d_); i <= MAX(max_d_, other.max_d_);
+                                             i++)
+    if (i <= other.max_d_ && i >= other.min_d_)
+      (*this)[i] += operation * other[i];
+  return *this;
 }
 
 Polynomial& Polynomial::operator+=(const Polynomial &other) {
-  *this = getResultOfAddOrSubOperation(*this, other, 1);
-  return *this;
+  return getResultOfAddOrSubOperation(other, 1);
 }
 
 Polynomial& Polynomial::operator-=(const Polynomial &other) {
-  *this = getResultOfAddOrSubOperation(*this, other, -1);
-  return *this;
+  return getResultOfAddOrSubOperation(other, -1);
 }

@@ -40,9 +40,8 @@ public:
   Polynomial& operator*=(int value);
   Polynomial& operator/=(int value);
 
-  friend Polynomial getResultOfAddOrSubOperation(const Polynomial& lhs,
-                                                 const Polynomial& rhs,
-                                                 int operation);
+  Polynomial& getResultOfAddOrSubOperation(const Polynomial& other,
+                                                  int operation);
   Polynomial& operator+=(const Polynomial& other);
   Polynomial& operator-=(const Polynomial& other);
 
