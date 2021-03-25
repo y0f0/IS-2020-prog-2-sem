@@ -124,44 +124,44 @@ Polynomial Polynomial::operator/(int value) const {
 }
 
 //fixed function
-Polynomial& getValueOperationResult(Polynomial* p, const int& value,
-                                    char operation) {
-  int *coefficients = new int[p->n_];
-  for (int i = 0; i < p->n_; i++) {
+Polynomial& Polynomial::getValueOperationResult(const int& value,
+                                                char operation) {
+  int *coefficients = new int[this->n_];
+  for (int i = 0; i < this->n_; i++) {
     if (operation == '*')
-      coefficients[i] = p->coefficients_[i] * value;
+      coefficients[i] = this->coefficients_[i] * value;
     else
-      coefficients[i] = p->coefficients_[i] / value;
+      coefficients[i] = this->coefficients_[i] / value;
   }
-  for (int i = 0; i < p->n_; i++) {
+  for (int i = 0; i < this->n_; i++) {
     if (coefficients[i] == 0)
-      p->min_d_++;
+      this->min_d_++;
     else
       break;
   }
-  for (int i = p->n_ - 1; i >= 0; i--) {
+  for (int i = this->n_ - 1; i >= 0; i--) {
     if (coefficients[i] == 0)
-      p->max_d_--;
+      this->max_d_--;
     else
       break;
   }
-  p->n_ = p->max_d_ - p->min_d_ + 1;
-  int *new_coefficients = new int[p->n_];
-  for (int i = p->min_d_; i <= p->max_d_; i++)  {
-    new_coefficients[i - p->min_d_] = coefficients[i - p->min_d_];
+  this->n_ = this->max_d_ - this->min_d_ + 1;
+  int *new_coefficients = new int[this->n_];
+  for (int i = this->min_d_; i <= this->max_d_; i++)  {
+    new_coefficients[i - this->min_d_] = coefficients[i - this->min_d_];
   }
-  p->coefficients_ = new_coefficients;
-  return *p;
+  this->coefficients_ = new_coefficients;
+  return *this;
 }
 
 Polynomial& Polynomial::operator*=(int value) {
-  return getValueOperationResult(this, value, '*');
+  return getValueOperationResult(value, '*');
 }
 
 Polynomial& Polynomial::operator/=(int value) {
   if (value == 0)
     throw invalid_argument("Error : division by zero");
-  return getValueOperationResult(this, value, '/');
+  return getValueOperationResult(value, '/');
 }
 
 Polynomial& Polynomial::getResultOfAddOrSubOperation(const Polynomial &other,

@@ -35,8 +35,7 @@ public:
 
   //fixed inside class
   //fixed Polynomial&
-  friend Polynomial& getValueOperationResult(Polynomial* p, const int& value,
-                                             char operation);
+  Polynomial& getValueOperationResult(const int& value, char operation);
   Polynomial& operator*=(int value);
   Polynomial& operator/=(int value);
 
