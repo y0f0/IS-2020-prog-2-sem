@@ -5,6 +5,8 @@
 /homework2/.idea
 /homework3/cmake-build-debug
 /homework3/.idea
+/homework3/cmake-build-wsl_profile
+
 
 # Prerequisites
 *.d
