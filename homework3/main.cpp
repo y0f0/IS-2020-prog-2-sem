@@ -110,7 +110,7 @@ public:
                               }
                              );
   }
-  void printMaximumsRoutesByStops() {
+  void printMaximumRoutesByStops() {
     auto max_bus_route = getMaximumRoutesByStops(bus_routes);
     auto max_trolleybus_route = getMaximumRoutesByStops(trolleybus_routes);
     auto max_tram_route = getMaximumRoutesByStops(tram_routes);
@@ -122,17 +122,6 @@ public:
     std::cout << "Трамвай №" << max_tram_route.first << " остановок -- "
               << max_tram_route.second.stops.size() << '\n';
   }
-  static void printStop(const Stop& stop) {
-    std::cout << stop.name_ << ' ' << stop.coord_x_ << ' ' << stop.coord_y_ << std::endl;
-  }
-  void printRoute() {
-    auto route = bus_routes["487"];
-    std::cout << route.type_of_vehicle_ << std::endl;
-    for (const auto& stop : route.stops) {
-      printStop(stop);
-    }
-  }
-
   static void countLength(std::map<std::string, Route>& routes) {
     for (auto& [_, route] : routes) {
       route.length = 0;
@@ -195,7 +184,7 @@ int main() {
 
   Database db("data.xml");
 
-  db.printMaximumsRoutesByStops();
+  db.printMaximumRoutesByStops();
 
   db.printMaximumRoutesByLength();
 
