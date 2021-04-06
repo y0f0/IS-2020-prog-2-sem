@@ -50,6 +50,7 @@ struct Stop {
 class Database {
 private:
   std::vector<Stop> stops;
+  //todo common code
   std::map<std::string, Route> bus_routes;
   std::map<std::string, Route> trolleybus_routes;
   std::map<std::string, Route> tram_routes;
