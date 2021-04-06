@@ -50,10 +50,8 @@ struct Stop {
 class Database {
 private:
   std::vector<Stop> stops;
-  //todo common code
-  std::map<std::string, Route> bus_routes;
-  std::map<std::string, Route> trolleybus_routes;
-  std::map<std::string, Route> tram_routes;
+  //fixed common code
+  std::map<std::string, std::map<std::string, Route>> routes;
   std::map<std::string, int> street_to_count_stops;
 
 public:
@@ -71,7 +69,7 @@ public:
       auto name = std::string(stop_node.child_value("the_official_name"));
       auto type_of_vehicle = std::string(stop_node.child_value("type_of_vehicle"));
       auto location = std::string(stop_node.child_value("location"));
-      auto routes = split(std::string(stop_node.child_value("routes")), ",");
+      auto routes_split = split(std::string(stop_node.child_value("routes")), ",");
 
       auto coord_x_and_y = split(std::string(stop_node.child_value("coordinates")), ",");
 
@@ -81,17 +79,9 @@ public:
       auto object_type = std::string(stop_node.child_value("object_type"));
 
       if (object_type == "Остановка" && !location.empty()) {
-        auto stop = Stop{name, type_of_vehicle, location, routes, coord_x, coord_y};
+        auto stop = Stop{name, type_of_vehicle, location, routes_split, coord_x, coord_y};
         stops.push_back(stop);
-        if (stop.type_of_vehicle_ == "Автобус") {
-          count_routes(bus_routes, stop);
-        }
-        if (stop.type_of_vehicle_ == "Троллейбус") {
-          count_routes(trolleybus_routes, stop);
-        }
-        if (stop.type_of_vehicle_ == "Трамвай") {
-          count_routes(tram_routes, stop);
-        }
+        count_routes(routes[type_of_vehicle], stop);
       }
     }
   }
@@ -112,16 +102,11 @@ public:
                              );
   }
   void printMaximumRoutesByStops() {
-    auto max_bus_route = getMaximumRoutesByStops(bus_routes);
-    auto max_trolleybus_route = getMaximumRoutesByStops(trolleybus_routes);
-    auto max_tram_route = getMaximumRoutesByStops(tram_routes);
     std::cout << "Маршрут с наибольшим количеством остановок по отдельными видам транспорта:\n";
-    std::cout << "Автобус №" << max_bus_route.first << " остановок -- "
-              << max_bus_route.second.stops.size() << '\n';
-    std::cout << "Троллейбус №" << max_trolleybus_route.first << " остановок -- "
-              << max_trolleybus_route.second.stops.size() << '\n';
-    std::cout << "Трамвай №" << max_tram_route.first << " остановок -- "
-              << max_tram_route.second.stops.size() << '\n';
+    for (const auto& [type_of_route, number_to_route] : routes) {
+      const auto& [number, route] = getMaximumRoutesByStops(routes[type_of_route]);
+      std::cout << type_of_route << " №" << number << " остановок -- " << route.stops.size() << '\n';
+    }
   }
   static void countLength(std::map<std::string, Route>& routes) {
     for (auto& [_, route] : routes) {
@@ -142,16 +127,11 @@ public:
                              );
   }
   void printMaximumRoutesByLength() {
-    auto max_bus_route = getMaximumRoutesByLength(bus_routes);
-    auto max_trolleybus_route = getMaximumRoutesByLength(trolleybus_routes);
-    auto max_tram_route = getMaximumRoutesByLength(tram_routes);
     std::cout << "Наиболее длинный маршрут (основывая на координатах) по отдельным видам транспорта\n";
-    std::cout << "Автобус №" << max_bus_route.first << " длина -- "
-              << max_bus_route.second.length << '\n';
-    std::cout << "Троллейбус №" << max_trolleybus_route.first << " длина -- "
-              << max_trolleybus_route.second.length << '\n';
-    std::cout << "Трамвай №" << max_tram_route.first << " длина -- "
-              << max_tram_route.second.length << '\n';
+    for (const auto& [type_of_route, number_to_route] : routes) {
+      const auto& [number, route] = getMaximumRoutesByLength(routes[type_of_route]);
+      std::cout << type_of_route << " №" << number << " остановок -- " << route.length << '\n';
+    }
   }
   auto getMaximumStreetByStops() {
     for (const Stop& stop : stops) {
@@ -164,19 +144,20 @@ public:
       }
     }
     auto res = make_pair(std::string(" "), 0);
+    auto& [res_name, res_counter] = res;
     for (const auto& [name, counter] : street_to_count_stops) {
-      if (counter > res.second) {
-        res.first = name;
-        res.second = counter;
+      if (counter > res_counter) {
+        res_name = name;
+        res_counter = counter;
       }
     }
     return res;
   }
   void printMaximumStreetByStops() {
-    auto max_street = getMaximumStreetByStops();
+    const auto& [name, counter] = getMaximumStreetByStops();
     std::cout << "Улицa с наибольшим числом остановок -- "
-              << max_street.first << " кол-во остановок: "
-              << max_street.second << std::endl;
+              << name << " кол-во остановок: "
+              << counter << std::endl;
   }
 };
 
