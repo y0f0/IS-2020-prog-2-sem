@@ -49,6 +49,7 @@ bool oneOf (InputIterator first, InputIterator last, UnaryPredicate pred)
   return flag;
 }
 
+//todo default template
 template <class ForwardIt, class Compare>
 bool isSorted(ForwardIt first, ForwardIt last, Compare comp)
 {
