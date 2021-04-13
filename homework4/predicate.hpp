@@ -49,9 +49,9 @@ bool oneOf (InputIterator first, InputIterator last, UnaryPredicate pred)
   return flag;
 }
 
-//todo default template
-template <class ForwardIt, class Compare>
-bool isSorted(ForwardIt first, ForwardIt last, Compare comp)
+//fixed default template
+template <class ForwardIt, class Compare=std::less<>>
+bool isSorted(ForwardIt first, ForwardIt last, Compare comp=std::less<>())
 {
   if (first != last) {
     ForwardIt next = first;
@@ -62,12 +62,6 @@ bool isSorted(ForwardIt first, ForwardIt last, Compare comp)
     }
   }
   return true;
-}
-
-template<class ForwardIt>
-bool isSorted(ForwardIt first, ForwardIt last)
-{
-  return isSorted(first, last, std::less<>());
 }
 
 template <class InputIterator, class UnaryPredicate>
