@@ -65,11 +65,12 @@ class CircularBuffer {
 
   ~CircularBuffer() {
     delete[] data;
+    //todo there is no point
     capacity = 0;
     head = 0;
     tail = 0;
   }
-
+  //todo O(1)
   void addLast(T x) {
     if (tail >= capacity) {
       tail = 0;
@@ -166,6 +167,7 @@ class CircularBuffer {
     tail = head;
   }
 
+  //todo more information
   T& operator[](int index) const {
     if (index < 0 || index > head - 1) {
       throw (std::out_of_range("Index is out of range!"));
