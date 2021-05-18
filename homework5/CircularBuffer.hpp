@@ -10,23 +10,27 @@ class CircularBuffer {
   int head;
   int tail;
  public:
-  class Iterator : public std::iterator<std::random_access_iterator_tag, T> {
+  class Iterator {
    private:
     T* iterator;
    public:
-    using difference_type = typename std::iterator<std::random_access_iterator_tag, T>::difference_type;
+    using iterator_category = std::random_access_iterator_tag;
+    using value_type = T;
+    using difference_type = int;
+    using pointer = T*;
+    using reference = T&;
     Iterator() : iterator(nullptr) {}
-    explicit Iterator(T* it) : iterator(it) {}
+    explicit Iterator(pointer it) : iterator(it) {}
     Iterator(const Iterator &other) : iterator(other.iterator) {}
     ~Iterator() = default;
     bool operator==(const Iterator& other) const { return iterator == other.iterator; }
     bool operator!=(const Iterator& other) const { return iterator != other.iterator; }
-    T& operator*() const { return *iterator; }
-    T* operator->() const { return iterator; }
+    reference operator*() const { return *iterator; }
+    pointer operator->() const { return iterator; }
     Iterator& operator++() { ++iterator; return *this; }
-    Iterator operator++(T) { Iterator tmp(*this); ++iterator; return tmp; }
+    Iterator operator++(value_type) { Iterator tmp(*this); ++iterator; return tmp; }
     Iterator& operator--() { --iterator; return *this; }
-    Iterator operator--(T) { Iterator tmp(*this); --iterator; return tmp; }
+    Iterator operator--(value_type) { Iterator tmp(*this); --iterator; return tmp; }
     Iterator operator+(difference_type it) const { return Iterator(iterator + it); }
     Iterator operator-(difference_type it) const { return Iterator(iterator - it); }
     bool operator>(const Iterator& other) const { return iterator > other.iterator; }
@@ -35,7 +39,7 @@ class CircularBuffer {
     bool operator<=(const Iterator& other) const { return iterator <= other.iterator; }
     Iterator& operator+=(difference_type it) { iterator += it; return *this; }
     Iterator& operator-=(difference_type it) { iterator -= it; return *this; }
-    T& operator[](difference_type i) const { return iterator[i]; }
+    reference operator[](difference_type i) const { return iterator[i]; }
     difference_type operator-(const Iterator& it) const { return iterator - it.iterator; }
     friend Iterator operator+(difference_type lhs, const Iterator& rhs) { return Iterator(lhs + rhs.iterator); }
     friend Iterator operator-(difference_type lhs, const Iterator& rhs) { return Iterator(lhs - rhs.iterator); }
