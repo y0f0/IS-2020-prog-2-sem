@@ -5,10 +5,10 @@
 template<typename T>
 class CircularBuffer {
  private:
-  T* data;
   int capacity;
   int head;
   int tail;
+  T* data;
  public:
   class Iterator {
    private:
