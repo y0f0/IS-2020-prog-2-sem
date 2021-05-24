@@ -2,59 +2,56 @@
 #include <iostream>
 #include <exception>
 
+#define MIN(a,b) (((a)<(b))?(a):(b))
+#define MAX(a,b) (((a)>(b))?(a):(b))
+
 template<typename T>
 class CircularBuffer {
- private:
+ public:
   int capacity;
+  int size;
   int head;
   int tail;
   T* data;
- public:
   class Iterator {
-   private:
-    T* iterator;
    public:
+    T* iterator;
+    const CircularBuffer<T>* buffer;
     using iterator_category = std::random_access_iterator_tag;
     using value_type = T;
     using difference_type = int;
     using pointer = T*;
     using reference = T&;
-    Iterator() : iterator(nullptr) {}
-    explicit Iterator(pointer it) : iterator(it) {}
-    Iterator(const Iterator &other) : iterator(other.iterator) {}
+
+    Iterator(pointer it, const CircularBuffer<T>* buffer1) : iterator(it), buffer(buffer1) {}
+    Iterator(const Iterator &other) : iterator(other.iterator), buffer(other.buffer) {}
     ~Iterator() = default;
+
     bool operator==(const Iterator& other) const { return iterator == other.iterator; }
     bool operator!=(const Iterator& other) const { return iterator != other.iterator; }
-    reference operator*() const { return *iterator; }
-    pointer operator->() const { return iterator; }
     Iterator& operator++() { ++iterator; return *this; }
-    Iterator operator++(value_type) { Iterator tmp(*this); ++iterator; return tmp; }
     Iterator& operator--() { --iterator; return *this; }
-    Iterator operator--(value_type) { Iterator tmp(*this); --iterator; return tmp; }
-    Iterator operator+(difference_type it) const { return Iterator(iterator + it); }
-    Iterator operator-(difference_type it) const { return Iterator(iterator - it); }
+    Iterator operator+(int it) const { return Iterator(iterator + it, buffer); }
+    Iterator operator-(int it) const { return Iterator(iterator - it, buffer); }
     bool operator>(const Iterator& other) const { return iterator > other.iterator; }
     bool operator<(const Iterator& other) const { return iterator < other.iterator; }
-    bool operator>=(const Iterator& other) const { return iterator >= other.iterator; }
-    bool operator<=(const Iterator& other) const { return iterator <= other.iterator; }
-    Iterator& operator+=(difference_type it) { iterator += it; return *this; }
-    Iterator& operator-=(difference_type it) { iterator -= it; return *this; }
-    reference operator[](difference_type i) const { return iterator[i]; }
     difference_type operator-(const Iterator& it) const { return iterator - it.iterator; }
-    friend Iterator operator+(difference_type lhs, const Iterator& rhs) { return Iterator(lhs + rhs.iterator); }
-    friend Iterator operator-(difference_type lhs, const Iterator& rhs) { return Iterator(lhs - rhs.iterator); }
+    reference operator*() const {
+      return buffer->data[(buffer->tail + iterator - buffer->begin().iterator) % buffer->capacity];
+    }
   };
 
   Iterator begin() const {
-    return Iterator(data);
+    return Iterator(data, this);
   }
 
   Iterator end() const {
-    return Iterator(data + head);
+    return Iterator(data + size, this);
   }
 
-  explicit CircularBuffer(int capacity = 1)
+  explicit CircularBuffer(int capacity)
       : capacity(capacity)
+      , size(0)
       , head(0)
       , tail(0)
       , data(new T[capacity])
@@ -65,92 +62,47 @@ class CircularBuffer {
 
   ~CircularBuffer() {
     delete[] data;
-    //todo there is no point
-    capacity = 0;
-    head = 0;
-    tail = 0;
+    //fixed there is no point
   }
-  //todo O(1)
+  //fixed O(1)
   void addLast(T x) {
-    if (tail >= capacity) {
-      tail = 0;
+    if (size == 0) {
+      data[head] = x;
+    } else {
+      head = (head + 1) % capacity;
+      data[head] = x;
     }
-    if (head == capacity) {
-      data[tail] = x;
-    }
-    else {
-      T* new_data = new T[head + 1];
-      for (auto i = 0; i < head; ++i) {
-        new_data[i] = data[i];
-      }
-      new_data[head] = x;
-      delete[] data;
-      data = new_data;
-      ++head;
-    }
-    tail++;
+    size = MIN(size + 1, capacity);
   }
 
   void delLast() {
-    if (head == 0) {
-      throw std::out_of_range("Empty array!");
-    }
-    T* new_data = new T[head - 1];
-    for (auto i = 0; i < head - 1; ++i) {
-      new_data[i] = data[i];
-    }
-    delete[] data;
-    data = new_data;
-    --head;
+    data[head] = 0;
+    head = (head + capacity - 1) % capacity;
+    size = MAX(size - 1, 0);
   }
 
   void addFirst(T x) {
-    if (head == capacity) {
-      T* new_data = new T[head];
-      new_data[0] = x;
-      for (auto i = 1; i < head; ++i) {
-        new_data[i] = data[i - 1];
-      }
-      delete[] data;
-      data = new_data;
+    if (size == 0) {
+      data[tail] = x;
+    } else {
+      tail = (tail + capacity - 1) % capacity;
+      data[tail] = x;
     }
-    else {
-      T* new_data = new T[head + 1];
-      for (auto i = 1; i < head + 1; ++i) {
-        new_data[i] = data[i - 1];
-      }
-      new_data[0] = x;
-      delete[] data;
-      data = new_data;
-      ++head;
-    }
+    size = MIN(size + 1, capacity);
   }
 
   void delFirst() {
-    if (head == 0) {
-      throw std::out_of_range("Empty array!");
-    }
-    T* new_data = new T[head - 1];
-    for (auto i = 0; i < head; ++i) {
-      new_data[i] = data[i + 1];
-    }
-    delete[] data;
-    data = new_data;
-    --head;
+    data[tail] = 0;
+    tail = (tail + 1) % capacity;
+    size = MAX(size - 1, 0);
   }
 
   T& first() {
-    if (head == 0) {
-      throw std::out_of_range("Empty array!");
-    }
-    return data[0];
+    return data[tail];
   }
 
   T& last() {
-    if (head == 0) {
-      throw std::out_of_range("Empty array!");
-    }
-    return data[head - 1];
+    return data[head];
   }
 
   void changeCapacity(int newCapacity) {
@@ -158,20 +110,27 @@ class CircularBuffer {
       throw std::bad_alloc();
     }
     T* new_data = new T[newCapacity];
-    for (auto i = 0; i < head; ++i) {
-      new_data[i] = data[i];
+    for (auto i = 0; i < capacity; ++i) {
+      new_data[i] = data[(i + tail) % capacity];
     }
     delete[] data;
     data = new_data;
+    tail = 0;
+    head = capacity;
     capacity = newCapacity;
-    tail = head;
   }
 
-  //todo more information
+  //fixed more information
   T& operator[](int index) const {
-    if (index < 0 || index > head - 1) {
-      throw (std::out_of_range("Index is out of range!"));
+    if (size == 0) {
+      throw std::out_of_range("Array is empty!");
     }
-    return data[index];
+    if (index < 0)  {
+      throw std::out_of_range("Index is out of range! The index is less than 0.");
+    }
+    if (index > size - 1) {
+      throw std::out_of_range("Index is out of range! The index greater than " + std::to_string(size - 1));
+    }
+    return data[(tail + index) % capacity];
   }
 };
