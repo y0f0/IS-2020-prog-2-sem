@@ -2,6 +2,7 @@
 #include <iostream>
 #include <exception>
 
+//todo min and max
 #define MIN(a,b) (((a)<(b))?(a):(b))
 #define MAX(a,b) (((a)>(b))?(a):(b))
 
