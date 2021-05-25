@@ -1,10 +1,8 @@
 #pragma once
-#include <iostream>
+#include <algorithm>
 #include <exception>
 
-//todo min and max
-#define MIN(a,b) (((a)<(b))?(a):(b))
-#define MAX(a,b) (((a)>(b))?(a):(b))
+//fixed std::min and MAX
 
 template<typename T>
 class CircularBuffer {
@@ -73,13 +71,13 @@ class CircularBuffer {
       head = (head + 1) % capacity;
       data[head] = x;
     }
-    size = MIN(size + 1, capacity);
+    size = std::min(size + 1, capacity);
   }
 
   void delLast() {
     data[head] = 0;
     head = (head + capacity - 1) % capacity;
-    size = MAX(size - 1, 0);
+    size = std::max(size - 1, 0);
   }
 
   void addFirst(T x) {
@@ -89,13 +87,13 @@ class CircularBuffer {
       tail = (tail + capacity - 1) % capacity;
       data[tail] = x;
     }
-    size = MIN(size + 1, capacity);
+    size = std::min(size + 1, capacity);
   }
 
   void delFirst() {
     data[tail] = 0;
     tail = (tail + 1) % capacity;
-    size = MAX(size - 1, 0);
+    size = std::max(size - 1, 0);
   }
 
   T& first() {
