@@ -5,7 +5,15 @@
 /homework2/.idea
 /homework3/cmake-build-debug
 /homework3/.idea
-/homework3/cmake-build-wsl_profile
+
+/homework4/cmake-build-wsl_profile
+/homework4/.idea
+
+/homework5/cmake-build-wsl_profile
+/homework5/.idea
+
+/homework6/cmake-build-wsl_profile
+/homework6/.idea
 
 
 # Prerequisites
